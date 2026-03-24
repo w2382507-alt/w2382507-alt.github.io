@@ -2,7 +2,8 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#2e3440">
     <title>理科学习笔记 + 思维导图工具</title>
     <style>
         * {
@@ -11,33 +12,177 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --sidebar-width: 260px;
+            --header-height: 60px;
+            --max-content-width: 1400px;
+            --primary-color: #5e81ac;
+            --primary-hover: #81a1c1;
+            --danger-color: #bf616a;
+            --danger-hover: #d08770;
+            --sidebar-bg: #2e3440;
+            --sidebar-text: #eceff4;
+            --bg-color: #f7f7f7;
+            --card-bg: #ffffff;
+            --border-color: #e0e0e0;
+            --text-color: #333;
+            --text-secondary: #666;
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 0.75rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --font-size-sm: 0.875rem;
+            --font-size-base: 1rem;
+            --font-size-lg: 1.125rem;
+            --font-size-xl: 1.25rem;
+            --border-radius: 8px;
+            --transition: all 0.3s ease;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background-color: #f7f7f7;
-            color: #333;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             line-height: 1.6;
+            min-height: 100vh;
         }
 
-        .container {
-            display: flex;
-            height: 100vh;
+        .app-wrapper {
+            max-width: var(--max-content-width);
+            margin: 0 auto;
+            min-height: 100vh;
+            background-color: var(--card-bg);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (min-width: 769px) {
+            .app-wrapper {
+                display: flex;
+                height: 100vh;
+                overflow: hidden;
+            }
+        }
+
+        .mobile-header {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background-color: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            padding: 0 var(--spacing-md);
+            align-items: center;
+            justify-content: space-between;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .mobile-header h1 {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            white-space: nowrap;
             overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        /* 侧边栏样式 */
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: var(--sidebar-text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: var(--spacing-xs);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 44px;
+            min-height: 44px;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .menu-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
         .sidebar {
-            width: 250px;
-            background-color: #2e3440;
-            color: #eceff4;
-            padding: 20px;
+            width: var(--sidebar-width);
+            background-color: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            padding: var(--spacing-lg);
             overflow-y: auto;
+            flex-shrink: 0;
+            position: relative;
+            transition: width 0.3s ease;
+        }
+
+        .sidebar.collapsed {
+            width: 60px;
+            padding: var(--spacing-lg) var(--spacing-sm);
+        }
+
+        .sidebar.collapsed h1,
+        .sidebar.collapsed .note-list,
+        .sidebar.collapsed .add-note-btn {
+            display: none;
+        }
+
+        .sidebar-toggle {
+            position: absolute;
+            top: var(--spacing-lg);
+            right: var(--spacing-sm);
+            background: linear-gradient(135deg, #4c566a 0%, #3b4252 100%);
+            border: 1px solid #5e81ac;
+            color: var(--sidebar-text);
+            font-size: 0.875rem;
+            cursor: pointer;
+            padding: var(--spacing-xs);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            transition: var(--transition);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .sidebar-toggle:hover {
+            background: linear-gradient(135deg, #5e81ac 0%, #4c566a 100%);
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .sidebar-toggle:active {
+            transform: scale(0.95);
+        }
+
+        .sidebar.collapsed .sidebar-toggle {
+            position: static;
+            margin: 0 auto;
+        }
+
+        .sidebar-toggle-icon {
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.collapsed .sidebar-toggle-icon {
+            transform: rotate(180deg);
         }
 
         .sidebar h1 {
-            font-size: 18px;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
+            font-size: var(--font-size-lg);
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-sm);
             border-bottom: 1px solid #4c566a;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding-right: 40px;
         }
 
         .note-list {
@@ -45,13 +190,15 @@
         }
 
         .note-item {
-            padding: 10px;
-            margin-bottom: 8px;
+            padding: var(--spacing-sm) var(--spacing-md);
+            margin-bottom: var(--spacing-xs);
             background-color: #3b4252;
-            border-radius: 4px;
+            border-radius: var(--border-radius);
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: var(--transition);
             text-align: center;
+            font-size: var(--font-size-sm);
+            word-break: break-word;
         }
 
         .note-item:hover {
@@ -59,122 +206,157 @@
         }
 
         .note-item.active {
-            background-color: #5e81ac;
+            background-color: var(--primary-color);
         }
 
         .add-note-btn {
             width: 100%;
-            padding: 10px;
-            margin-top: 20px;
-            background-color: #5e81ac;
+            padding: var(--spacing-sm) var(--spacing-md);
+            margin-top: var(--spacing-md);
+            background-color: var(--primary-color);
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: var(--border-radius);
             cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.2s;
+            font-size: var(--font-size-sm);
+            transition: var(--transition);
+            min-height: 44px;
         }
 
         .add-note-btn:hover {
-            background-color: #81a1c1;
+            background-color: var(--primary-hover);
         }
 
-        /* 主内容区样式 */
+        .add-note-btn:active {
+            transform: scale(0.98);
+        }
+
         .main-content {
             flex: 1;
             display: flex;
             flex-direction: column;
-            background-color: white;
+            background-color: var(--card-bg);
+            min-width: 0;
         }
 
         .content-header {
-            padding: 20px;
-            border-bottom: 1px solid #e0e0e0;
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
         }
 
         .content-title {
-            font-size: 20px;
+            font-size: var(--font-size-xl);
             font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .action-buttons {
             display: flex;
-            gap: 10px;
+            gap: var(--spacing-sm);
+            flex-wrap: wrap;
         }
 
         .btn {
-            padding: 8px 16px;
+            padding: var(--spacing-sm) var(--spacing-md);
             border: none;
-            border-radius: 4px;
+            border-radius: var(--border-radius);
             cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.2s;
+            font-size: var(--font-size-sm);
+            transition: var(--transition);
+            white-space: nowrap;
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .btn-primary {
-            background-color: #5e81ac;
+            background-color: var(--primary-color);
             color: white;
         }
 
         .btn-primary:hover {
-            background-color: #81a1c1;
+            background-color: var(--primary-hover);
         }
 
         .btn-danger {
-            background-color: #bf616a;
+            background-color: var(--danger-color);
             color: white;
         }
 
         .btn-danger:hover {
-            background-color: #d08770;
+            background-color: var(--danger-hover);
         }
 
-        /* 笔记编辑区样式 */
+        .btn:active {
+            transform: scale(0.98);
+        }
+
         .note-editor {
             flex: 1;
-            padding: 20px;
+            padding: var(--spacing-lg);
             overflow-y: auto;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: var(--spacing-lg);
         }
 
         .form-label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: var(--spacing-sm);
             font-weight: 500;
-            color: #444;
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
         }
 
         .form-input {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-size: var(--font-size-base);
+            transition: var(--transition);
+            min-height: 44px;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(94, 129, 172, 0.2);
         }
 
         .form-textarea {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-size: var(--font-size-base);
             resize: vertical;
             min-height: 200px;
             font-family: inherit;
+            line-height: 1.6;
+            transition: var(--transition);
         }
 
-        /* 思维导图容器样式 */
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(94, 129, 172, 0.2);
+        }
+
         .mindmap-container {
             flex: 1;
             position: relative;
-            background-color: #f7f7f7;
-            border-top: 1px solid #e0e0e0;
+            background-color: var(--bg-color);
+            border-top: 1px solid var(--border-color);
         }
 
         #mindmap {
@@ -182,9 +364,8 @@
             height: 100%;
         }
 
-        /* 超链接样式 */
         .reference-link {
-            color: #5e81ac;
+            color: var(--primary-color);
             text-decoration: none;
             cursor: pointer;
         }
@@ -193,72 +374,268 @@
             text-decoration: underline;
         }
 
-        /* 模态框样式 */
         .modal {
             display: none;
             position: fixed;
-            z-index: 1000;
+            z-index: 2000;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
+            padding: var(--spacing-md);
+            overflow-y: auto;
         }
 
         .modal-content {
-            background-color: white;
-            margin: 15% auto;
-            padding: 20px;
-            border-radius: 4px;
-            width: 80%;
+            background-color: var(--card-bg);
+            margin: 10vh auto;
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius);
             max-width: 500px;
+            width: 100%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
         }
 
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: var(--spacing-lg);
         }
 
         .modal-title {
-            font-size: 18px;
+            font-size: var(--font-size-lg);
             font-weight: 600;
         }
 
         .close-btn {
             background: none;
             border: none;
-            font-size: 24px;
+            font-size: 1.5rem;
             cursor: pointer;
+            color: var(--text-secondary);
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
         }
 
-        /* 响应式设计 */
+        .close-btn:hover {
+            background-color: var(--bg-color);
+        }
+
+        .modal-actions {
+            margin-top: var(--spacing-lg);
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--spacing-sm);
+        }
+
+        .empty-message {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            font-size: var(--font-size-lg);
+            color: #999;
+            text-align: center;
+            padding: var(--spacing-xl);
+        }
+
+        .folder-item {
+            padding: var(--spacing-sm) var(--spacing-md);
+            margin-bottom: var(--spacing-xs);
+            cursor: pointer;
+            font-size: var(--font-size-sm);
+            word-break: break-word;
+        }
+
+        .folder-item .delete-folder-btn {
+            margin-left: var(--spacing-sm);
+            padding: 2px 8px;
+            font-size: 0.75rem;
+            background-color: var(--danger-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            min-height: 28px;
+        }
+
+        .drop-area {
+            margin-top: var(--spacing-lg);
+            margin-bottom: var(--spacing-md);
+            font-size: 0.75rem;
+            color: var(--primary-hover);
+            font-weight: 500;
+            padding: var(--spacing-sm) var(--spacing-xs);
+            border: 2px dashed #4c566a;
+            border-radius: var(--border-radius);
+            text-align: center;
+        }
+
         @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
+            :root {
+                --header-height: 56px;
+                --spacing-lg: 1rem;
+                --spacing-xl: 1.5rem;
+            }
+
+            .mobile-header {
+                display: flex;
+            }
+
+            .app-wrapper {
+                padding-top: var(--header-height);
             }
 
             .sidebar {
+                position: fixed;
+                top: var(--header-height);
+                left: 0;
                 width: 100%;
-                height: 200px;
+                height: calc(100vh - var(--header-height));
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                z-index: 999;
+                padding: var(--spacing-md);
             }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .sidebar.collapsed {
+                width: 100%;
+                padding: var(--spacing-md);
+            }
+
+            .sidebar.collapsed h1,
+            .sidebar.collapsed .note-list,
+            .sidebar.collapsed .add-note-btn {
+                display: block;
+            }
+
+            .sidebar-toggle {
+                display: none;
+            }
+
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                top: var(--header-height);
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 998;
+            }
+
+            .sidebar-overlay.show {
+                display: block;
+            }
+
+            .content-header {
+                padding: var(--spacing-md);
+            }
+
+            .content-title {
+                font-size: var(--font-size-lg);
+                width: 100%;
+            }
+
+            .action-buttons {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .btn {
+                flex: 1;
+                min-width: 0;
+                font-size: 0.8125rem;
+                padding: var(--spacing-xs) var(--spacing-sm);
+            }
+
+            .note-editor {
+                padding: var(--spacing-md);
+            }
+
+            .form-textarea {
+                min-height: 150px;
+            }
+
+            .modal-content {
+                margin: 5vh auto;
+                padding: var(--spacing-md);
+            }
+        }
+
+        @media (max-width: 480px) {
+            :root {
+                --font-size-base: 1rem;
+            }
+
+            .btn {
+                font-size: 0.75rem;
+                padding: var(--spacing-xs) var(--spacing-xs);
+            }
+
+            .form-input,
+            .form-textarea {
+                font-size: 16px;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .mobile-header {
+                display: none !important;
+            }
+
+            .sidebar-overlay {
+                display: none !important;
+            }
+        }
+
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- 侧边栏 -->
-        <div class="sidebar">
+    <div class="app-wrapper">
+        <header class="mobile-header">
+            <h1>理科学习笔记</h1>
+            <button class="menu-toggle" onclick="toggleSidebar()" aria-label="切换菜单">
+                <span id="menuIcon">☰</span>
+            </button>
+        </header>
+
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+        <aside class="sidebar" id="sidebar">
+            <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleDesktopSidebar()" aria-label="收起侧边栏">
+                <span class="sidebar-toggle-icon">❮</span>
+            </button>
             <h1>理科学习笔记</h1>
             <ul class="note-list" id="noteList"></ul>
             <button class="add-note-btn" onclick="addNewNote()">添加新笔记</button>
-            <button class="add-note-btn" onclick="console.log('Add folder button clicked'); addNewFolder()">添加文件夹</button>
-        </div>
+            <button class="add-note-btn" onclick="addNewFolder()">添加文件夹</button>
+        </aside>
 
-        <!-- 主内容区 -->
-        <div class="main-content">
-            <div class="content-header">
+        <main class="main-content">
+            <header class="content-header">
                 <h2 class="content-title" id="contentTitle">选择笔记</h2>
                 <div class="action-buttons">
                     <button class="btn btn-primary" onclick="generateMindmap()">生成思维导图</button>
@@ -266,21 +643,20 @@
                     <button class="btn btn-primary" onclick="importNotes()">导入笔记</button>
                     <button class="btn btn-danger" onclick="deleteCurrentNote()">删除笔记</button>
                 </div>
-            </div>
+            </header>
 
-            <!-- 笔记编辑区 -->
             <div class="note-editor" id="noteEditor">
-                <div id="emptyNoteMessage" style="display: flex; justify-content: center; align-items: center; height: 100%; font-size: 18px; color: #999;">
+                <div class="empty-message" id="emptyNoteMessage">
                     请选择笔记
                 </div>
                 <div id="noteForm" style="display: none;">
                     <div class="form-group">
-                        <label class="form-label" for="theoremName">定理/公理名称 *</label>
-                        <input type="text" class="form-input" id="theoremName" placeholder="请输入定理/公理名称">
+                        <label class="form-label" for="theoremName">名称 *</label>
+                        <input type="text" class="form-input" id="theoremName" placeholder="请输入名称">
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="proofProcess">证明过程 *</label>
-                        <textarea class="form-textarea" id="proofProcess" placeholder="请输入证明过程"></textarea>
+                        <label class="form-label" for="proofProcess">描述 *</label>
+                        <textarea class="form-textarea" id="proofProcess" placeholder="请输入描述"></textarea>
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="references">引用的其他定理（用逗号分隔）</label>
@@ -289,22 +665,20 @@
                 </div>
             </div>
 
-            <!-- 思维导图容器 -->
             <div class="mindmap-container" id="mindmapContainer" style="display: none;">
                 <div id="mindmap"></div>
             </div>
-        </div>
+        </main>
     </div>
 
-    <!-- 确认删除模态框 -->
     <div class="modal" id="deleteModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title">确认删除</h3>
-                <button class="close-btn" onclick="closeDeleteModal()">&times;</button>
+                <button class="close-btn" onclick="closeDeleteModal()" aria-label="关闭">&times;</button>
             </div>
             <p>确定要删除当前笔记吗？此操作不可恢复。</p>
-            <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px;">
+            <div class="modal-actions">
                 <button class="btn" onclick="closeDeleteModal()">取消</button>
                 <button class="btn btn-danger" onclick="confirmDeleteNote()">删除</button>
             </div>
@@ -313,83 +687,157 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
     <script>
-        // 笔记和文件夹数据存储
         let notes = [];
         let folders = [];
         let currentNoteId = null;
         let mindmapSvg = null;
 
-        // 初始化应用
+        const GITHUB_API_URL = 'https://api.github.com';
+
+        function getGitHubConfig() {
+            return {
+                owner: localStorage.getItem('githubOwner') || '',
+                repo: localStorage.getItem('githubRepo') || ''
+            };
+        }
+
+        function saveGitHubConfig(owner, repo) {
+            localStorage.setItem('githubOwner', owner);
+            localStorage.setItem('githubRepo', repo);
+        }
+
+        function getGitHubToken() {
+            return localStorage.getItem('githubToken');
+        }
+
+        function saveGitHubToken(token) {
+            localStorage.setItem('githubToken', token);
+        }
+
+        function clearGitHubToken() {
+            localStorage.removeItem('githubToken');
+        }
+
+        function promptForGitHubToken() {
+            const token = prompt('请输入您的 GitHub Token（用于访问仓库）：');
+            if (token && token.trim()) {
+                saveGitHubToken(token.trim());
+                return token.trim();
+            }
+            return null;
+        }
+
+        function promptForGitHubConfig() {
+            const config = getGitHubConfig();
+            const owner = prompt('请输入 GitHub 用户名：', config.owner);
+            if (!owner) return null;
+            const repo = prompt('请输入仓库名称：', config.repo);
+            if (!repo) return null;
+            saveGitHubConfig(owner.trim(), repo.trim());
+            return { owner: owner.trim(), repo: repo.trim() };
+        }
+
+        function initGitHubToken() {
+            let token = getGitHubToken();
+            if (!token) {
+                token = promptForGitHubToken();
+            }
+            const config = getGitHubConfig();
+            if (!config.owner || !config.repo) {
+                promptForGitHubConfig();
+            }
+            return token;
+        }
+
+        function getCurrentGitHubToken() {
+            let token = getGitHubToken();
+            if (!token) {
+                token = promptForGitHubToken();
+            }
+            return token;
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const menuIcon = document.getElementById('menuIcon');
+            
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('show');
+            menuIcon.textContent = sidebar.classList.contains('open') ? '✕' : '☰';
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const menuIcon = document.getElementById('menuIcon');
+            
+            sidebar.classList.remove('open');
+            overlay.classList.remove('show');
+            menuIcon.textContent = '☰';
+        }
+
+        function toggleDesktopSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.getElementById('sidebarToggle');
+            
+            sidebar.classList.toggle('collapsed');
+            
+            if (sidebar.classList.contains('collapsed')) {
+                toggleBtn.setAttribute('aria-label', '展开侧边栏');
+            } else {
+                toggleBtn.setAttribute('aria-label', '收起侧边栏');
+            }
+        }
+
         function initApp() {
-            // 初始化 GitHub Token
             initGitHubToken();
             loadNotes();
             renderNoteList();
             setupEventListeners();
         }
 
-        // 从本地存储加载笔记和文件夹
         function loadNotes() {
             const storedNotes = localStorage.getItem('scienceNotes');
             const storedFolders = localStorage.getItem('scienceFolders');
             if (storedNotes) {
-                console.log('Loaded from localStorage:', storedNotes);
                 const parsedData = JSON.parse(storedNotes);
-                console.log('Parsed data:', parsedData);
-                // 处理不同的数据格式
                 if (Array.isArray(parsedData)) {
                     notes = parsedData;
                 } else if (parsedData.notes) {
                     notes = parsedData.notes;
-                    // 如果数据中包含folders，也一并加载
                     if (parsedData.folders) {
                         folders = parsedData.folders;
                     }
                 } else {
                     notes = [];
                 }
-                console.log('Final notes:', notes);
             }
             if (storedFolders && !folders.length) {
-                console.log('Loaded folders from localStorage:', storedFolders);
                 folders = JSON.parse(storedFolders);
-                console.log('Parsed folders:', folders);
             }
         }
 
-        // 保存笔记和文件夹到本地存储
         function saveNotes() {
             localStorage.setItem('scienceNotes', JSON.stringify(notes));
             localStorage.setItem('scienceFolders', JSON.stringify(folders));
         }
 
-        // 渲染笔记列表
         function renderNoteList() {
             const noteList = document.getElementById('noteList');
             noteList.innerHTML = '';
 
-            // 渲染根目录下的文件夹
             folders.filter(folder => !folder.parentId).forEach(folder => {
                 renderFolder(noteList, folder, 0);
             });
 
-            // 添加根目录拖放区域
             const rootDropArea = document.createElement('li');
-            rootDropArea.style.marginTop = '20px';
-            rootDropArea.style.marginBottom = '10px';
-            rootDropArea.style.fontSize = '12px';
-            rootDropArea.style.color = '#81a1c1';
-            rootDropArea.style.fontWeight = '500';
-            rootDropArea.style.padding = '10px 5px';
-            rootDropArea.style.border = '2px dashed #4c566a';
-            rootDropArea.style.borderRadius = '4px';
-            rootDropArea.style.textAlign = 'center';
+            rootDropArea.className = 'drop-area';
             rootDropArea.textContent = '根目录 - 拖放内容到此处';
             rootDropArea.ondragover = (e) => dragOver(e);
             rootDropArea.ondrop = (e) => drop(e, 'root', null);
             noteList.appendChild(rootDropArea);
 
-            // 渲染根目录下的笔记
             const rootNotes = notes.filter(note => !note.folderId);
             if (rootNotes.length > 0) {
                 rootNotes.forEach(note => {
@@ -404,14 +852,11 @@
             }
         }
 
-        // 递归渲染文件夹
         function renderFolder(parent, folder, level) {
             const folderItem = document.createElement('li');
             folderItem.className = 'folder-item';
             folderItem.style.paddingLeft = `${level * 20}px`;
-            folderItem.style.cursor = 'pointer';
-            folderItem.style.marginBottom = '5px';
-            folderItem.innerHTML = `📁 ${folder.name} <button style="margin-left: 10px; padding: 2px 6px; font-size: 10px; background-color: #bf616a; color: white; border: none; border-radius: 3px; cursor: pointer;" onclick="deleteFolder('${folder.id}')">删除</button>`;
+            folderItem.innerHTML = `📁 ${folder.name} <button class="delete-folder-btn" onclick="event.stopPropagation(); deleteFolder('${folder.id}')">删除</button>`;
             folderItem.ondblclick = () => renameFolder(folder.id);
             folderItem.draggable = true;
             folderItem.ondragstart = (e) => dragStart(e, 'folder', folder.id);
@@ -419,18 +864,15 @@
             folderItem.ondrop = (e) => drop(e, 'folder', folder.id);
             parent.appendChild(folderItem);
 
-            // 渲染文件夹内的子文件夹
             folders.filter(subFolder => subFolder.parentId === folder.id).forEach(subFolder => {
                 renderFolder(parent, subFolder, level + 1);
             });
 
-            // 渲染文件夹内的笔记
             notes.filter(note => note.folderId === folder.id).forEach(note => {
                 const li = document.createElement('li');
                 li.className = `note-item ${note.id === currentNoteId ? 'active' : ''}`;
                 li.style.paddingLeft = `${(level + 1) * 30}px`;
                 
-                // 根据层级设置不同的样式
                 if (level === 0) {
                     li.style.backgroundColor = '#3b4252';
                     li.style.borderLeft = '4px solid #5e81ac';
@@ -450,7 +892,6 @@
             });
         }
 
-        // 选择笔记
         function selectNote(noteId) {
             currentNoteId = noteId;
             const note = notes.find(n => n.id === noteId);
@@ -459,15 +900,16 @@
                 document.getElementById('theoremName').value = note.name;
                 document.getElementById('proofProcess').value = note.proof;
                 document.getElementById('references').value = note.references.join(', ');
-                // 显示表单，隐藏提示信息
                 document.getElementById('emptyNoteMessage').style.display = 'none';
                 document.getElementById('noteForm').style.display = 'block';
                 renderNoteList();
                 showEditor();
+                if (window.innerWidth <= 768) {
+                    closeSidebar();
+                }
             }
         }
 
-        // 添加新笔记
         function addNewNote() {
             const newNote = {
                 id: Date.now().toString(),
@@ -478,36 +920,25 @@
             };
             notes.push(newNote);
             saveNotes();
-            // 显示表单，隐藏提示信息
             document.getElementById('emptyNoteMessage').style.display = 'none';
             document.getElementById('noteForm').style.display = 'block';
             selectNote(newNote.id);
         }
 
-        // 添加新文件夹
         function addNewFolder() {
-            console.log('addNewFolder function called');
             const folderName = prompt('请输入文件夹名称：');
-            console.log('Folder name entered:', folderName);
             if (folderName && folderName.trim()) {
                 const newFolder = {
                     id: Date.now().toString(),
                     name: folderName.trim(),
                     parentId: null
                 };
-                console.log('Creating new folder:', newFolder);
                 folders.push(newFolder);
-                console.log('Folders array after addition:', folders);
                 saveNotes();
-                console.log('Notes saved');
                 renderNoteList();
-                console.log('Note list rendered');
-            } else {
-                console.log('No folder name entered or empty');
             }
         }
 
-        // 重命名文件夹
         function renameFolder(folderId) {
             const folder = folders.find(f => f.id === folderId);
             if (folder) {
@@ -520,24 +951,20 @@
             }
         }
 
-        // 删除文件夹
         function deleteFolder(folderId) {
             if (confirm('确定要删除此文件夹吗？文件夹内的内容将移到根目录。')) {
-                // 将文件夹内的笔记移到根目录
                 notes.forEach(note => {
                     if (note.folderId === folderId) {
                         note.folderId = null;
                     }
                 });
                 
-                // 将子文件夹移到根目录
                 folders.forEach(subFolder => {
                     if (subFolder.parentId === folderId) {
                         subFolder.parentId = null;
                     }
                 });
                 
-                // 删除文件夹
                 folders = folders.filter(folder => folder.id !== folderId);
                 
                 saveNotes();
@@ -545,14 +972,12 @@
             }
         }
 
-        // 删除当前笔记
         function deleteCurrentNote() {
             if (currentNoteId) {
                 document.getElementById('deleteModal').style.display = 'block';
             }
         }
 
-        // 确认删除笔记
         function confirmDeleteNote() {
             if (currentNoteId) {
                 notes = notes.filter(note => note.id !== currentNoteId);
@@ -562,7 +987,6 @@
                 document.getElementById('theoremName').value = '';
                 document.getElementById('proofProcess').value = '';
                 document.getElementById('references').value = '';
-                // 显示提示信息，隐藏表单
                 document.getElementById('emptyNoteMessage').style.display = 'flex';
                 document.getElementById('noteForm').style.display = 'none';
                 renderNoteList();
@@ -570,46 +994,38 @@
             }
         }
 
-        // 关闭删除模态框
         function closeDeleteModal() {
             document.getElementById('deleteModal').style.display = 'none';
         }
 
-        // 生成思维导图
         function generateMindmap() {
             showMindmap();
             drawMindmap();
         }
 
-        // 显示编辑区
         function showEditor() {
             document.getElementById('noteEditor').style.display = 'block';
             document.getElementById('mindmapContainer').style.display = 'none';
         }
 
-        // 显示思维导图
         function showMindmap() {
             document.getElementById('noteEditor').style.display = 'none';
             document.getElementById('mindmapContainer').style.display = 'block';
         }
 
-        // 绘制思维导图
         function drawMindmap() {
             const container = document.getElementById('mindmap');
             container.innerHTML = '';
 
-            // 计算节点层级
             const nodeLevels = calculateNodeLevels();
             const maxLevel = Math.max(...Object.values(nodeLevels));
 
-            // 设置画布尺寸
             const width = container.clientWidth;
             const height = container.clientHeight;
             const nodeWidth = 120;
             const nodeHeight = 60;
             const levelHeight = height / (maxLevel + 2);
 
-            // 创建SVG
             const zoom = d3.zoom()
                 .scaleExtent([0.1, 4])
                 .on('zoom', (event) => {
@@ -622,10 +1038,8 @@
                 .attr('height', height)
                 .call(zoom);
 
-            // 创建一个g元素用于缩放
             const g = mindmapSvg.append('g');
 
-            // 计算每个层级的节点位置
             const levelNodes = {};
             Object.entries(nodeLevels).forEach(([nodeId, level]) => {
                 if (!levelNodes[level]) {
@@ -634,25 +1048,19 @@
                 levelNodes[level].push(nodeId);
             });
 
-            // 优化节点布局，减少连线重叠
             const optimizedPositions = optimizeNodePositions(levelNodes, nodeLevels);
 
-            // 存储节点位置
             const nodePositions = {};
 
-            // 绘制节点 - 忽略文件夹结构，显示所有笔记
             notes.forEach(note => {
                 const nodeId = note.id;
                 const level = nodeLevels[note.id];
                 const position = optimizedPositions[nodeId];
                 const x = position.x;
-                // 调整Y坐标，使基础公理在底部，复杂定理在上方
                 const y = height - (level * levelHeight + levelHeight / 2);
 
-                // 存储节点位置
                 nodePositions[nodeId] = { x, y };
 
-                // 创建节点组
                 const nodeGroup = g.append('g')
                     .attr('class', 'mindmap-node')
                     .datum(nodeId)
@@ -662,7 +1070,6 @@
                         .on('drag', dragged)
                         .on('end', dragended));
 
-                // 节点背景 - 更接近Obsidian风格
                 nodeGroup.append('rect')
                     .attr('x', -nodeWidth / 2)
                     .attr('y', -nodeHeight / 2)
@@ -674,7 +1081,6 @@
                     .attr('stroke', '#5e81ac')
                     .attr('stroke-width', 1.5);
 
-                // 节点文本 - 确保正确显示
                 nodeGroup.append('text')
                     .attr('x', 0)
                     .attr('y', 0)
@@ -686,7 +1092,6 @@
                     .text(note.name)
                     .call(wrapText, nodeWidth - 20);
 
-                // 添加点击事件
                 nodeGroup.append('rect')
                     .attr('x', -nodeWidth / 2)
                     .attr('y', -nodeHeight / 2)
@@ -697,13 +1102,11 @@
                     .on('click', () => selectNote(nodeId));
             });
 
-            // 绘制连接线（在节点下方）
             notes.forEach(note => {
                 const sourceId = note.id;
                 const sourceLevel = nodeLevels[sourceId];
                 const sourcePosition = optimizedPositions[sourceId];
                 const sourceX = sourcePosition.x;
-                // 调整Y坐标，使基础公理在底部，复杂定理在上方
                 const sourceY = height - (sourceLevel * levelHeight + levelHeight / 2);
 
                 note.references.forEach(refName => {
@@ -713,11 +1116,8 @@
                         const targetLevel = nodeLevels[targetId];
                         const targetPosition = optimizedPositions[targetId];
                         const targetX = targetPosition.x;
-                        // 调整Y坐标，使基础公理在底部，复杂定理在上方
                         const targetY = height - (targetLevel * levelHeight + levelHeight / 2);
 
-                        // 使用曲线连接，更接近Obsidian风格，添加箭头
-                        // 方向：由被引用指向引用（从target到source）
                         g.append('path')
                             .attr('d', `M ${targetX} ${targetY} C ${targetX} ${(sourceY + targetY) / 2}, ${sourceX} ${(sourceY + targetY) / 2}, ${sourceX} ${sourceY}`)
                             .attr('stroke', '#999')
@@ -729,35 +1129,28 @@
                 });
             });
 
-            // 拖拽函数
             function dragstarted(event, d) {
                 d3.select(this).raise();
-                // 只修改节点背景矩形的stroke属性
                 d3.select(this).select('rect:first-child').attr('stroke', '#ff0000');
             }
 
             function dragged(event, d) {
                 d3.select(this).attr('transform', `translate(${event.x}, ${event.y})`);
-                // 更新连接线
                 updateLinks();
             }
 
             function dragended(event, d) {
-                // 只修改节点背景矩形的stroke属性
                 d3.select(this).select('rect:first-child').attr('stroke', '#5e81ac');
-                // 保存新位置
                 const nodeId = d3.select(this).datum();
                 if (nodeId) {
                     nodePositions[nodeId] = { x: event.x, y: event.y };
                 }
             }
 
-            // 优化节点布局，减少连线重叠
             function optimizeNodePositions(levelNodes, nodeLevels) {
                 const positions = {};
                 const levels = Object.keys(levelNodes).map(Number).sort((a, b) => a - b);
                 
-                // 从底层开始，逐层计算位置
                 levels.forEach(level => {
                     const nodes = levelNodes[level];
                     const levelWidth = width / nodes.length;
@@ -766,7 +1159,6 @@
                         const note = notes.find(n => n.id === nodeId);
                         if (!note) return;
                         
-                        // 计算引用节点的平均位置
                         let refXSum = 0;
                         let refCount = 0;
                         
@@ -780,14 +1172,11 @@
                         
                         let x;
                         if (refCount > 0) {
-                            // 如果有引用节点，尽量靠近引用节点的平均位置
                             x = refXSum / refCount;
-                            // 调整位置，确保在当前层级内
                             const minX = index * levelWidth;
                             const maxX = (index + 1) * levelWidth;
                             x = Math.max(minX, Math.min(maxX, x));
                         } else {
-                            // 如果没有引用节点，使用默认位置
                             x = (index + 0.5) * levelWidth;
                         }
                         
@@ -798,7 +1187,6 @@
                 return positions;
             }
 
-            // 确保箭头标记只创建一次
             if (g.select('#arrowhead').empty()) {
                 g.append('defs').append('marker')
                     .attr('id', 'arrowhead')
@@ -815,12 +1203,9 @@
                     .style('stroke', 'none');
             }
 
-            // 更新连接线
             function updateLinks() {
-                // 移除旧的连接线
                 g.selectAll('.mindmap-link').remove();
                 
-                // 重新绘制连接线
                 notes.forEach(note => {
                     const sourceGroup = g.selectAll('.mindmap-node').filter(function() {
                         return d3.select(this).datum() === note.id;
@@ -843,8 +1228,6 @@
                                     const targetX = parseFloat(targetTransform.split(',')[0].replace('translate(', ''));
                                     const targetY = parseFloat(targetTransform.split(',')[1].replace(')', ''));
 
-                                    // 使用曲线连接，更接近Obsidian风格，添加箭头
-                                    // 方向：由被引用指向引用（从target到source）
                                     g.append('path')
                                         .attr('d', `M ${targetX} ${targetY} C ${targetX} ${(sourceY + targetY) / 2}, ${sourceX} ${(sourceY + targetY) / 2}, ${sourceX} ${sourceY}`)
                                         .attr('stroke', '#999')
@@ -860,19 +1243,16 @@
             }
         }
 
-        // 计算节点层级
         function calculateNodeLevels() {
             const levels = {};
             const visited = new Set();
             const processing = new Set();
 
-            // 递归计算层级
             function calculateLevel(noteId) {
                 if (visited.has(noteId)) {
                     return levels[noteId];
                 }
                 if (processing.has(noteId)) {
-                    // 检测到循环引用，返回当前最小可能层级
                     return 1;
                 }
 
@@ -882,36 +1262,29 @@
                 processing.add(noteId);
                 
                 let maxChildLevel = 0;
-                console.log('Processing note:', note.name, 'with references:', note.references);
                 note.references.forEach(refName => {
                     const refNote = notes.find(n => n.name === refName);
-                    console.log('Looking for ref:', refName, 'found:', refNote ? refNote.name : 'not found');
                     if (refNote) {
                         const childLevel = calculateLevel(refNote.id);
-                        console.log('Child level for', refName, 'is', childLevel);
                         maxChildLevel = Math.max(maxChildLevel, childLevel);
                     }
                 });
 
                 levels[noteId] = maxChildLevel + 1;
-                console.log('Level for', note.name, 'is', levels[noteId]);
                 processing.delete(noteId);
                 visited.add(noteId);
                 return levels[noteId];
             }
 
-            // 计算所有节点的层级
             notes.forEach(note => {
                 if (!visited.has(note.id)) {
                     calculateLevel(note.id);
                 }
             });
 
-            console.log('Final node levels:', levels);
             return levels;
         }
 
-        // 文本换行
         function wrapText(text, width) {
             text.each(function() {
                 const text = d3.select(this);
@@ -921,7 +1294,7 @@
                 let lineNumber = 0;
                 const lineHeight = 1.2;
                 const y = text.attr('y');
-                const x = text.attr('x'); // 获取父元素的x坐标
+                const x = text.attr('x');
                 const dy = parseFloat(text.attr('dy') || 0);
                 let tspan = text.text(null).append('tspan').attr('x', x).attr('y', y).attr('dy', dy + 'em');
 
@@ -938,9 +1311,7 @@
             });
         }
 
-        // 设置事件监听器
         function setupEventListeners() {
-            // 自动保存笔记
             const theoremNameInput = document.getElementById('theoremName');
             const proofProcessInput = document.getElementById('proofProcess');
             const referencesInput = document.getElementById('references');
@@ -951,11 +1322,7 @@
                     if (note) {
                         note.name = theoremNameInput.value;
                         note.proof = proofProcessInput.value;
-                        // 调试：查看输入值
-                        console.log('References input:', referencesInput.value);
-                        // 分割引用 - 处理中文和英文逗号
                         note.references = referencesInput.value.split(/[,，]/).map(r => r.trim()).filter(r => r);
-                        console.log('Split references:', note.references);
                         saveNotes();
                         renderNoteList();
                     }
@@ -966,26 +1333,20 @@
             proofProcessInput.addEventListener('input', saveCurrentNote);
             referencesInput.addEventListener('input', saveCurrentNote);
 
-            // 渲染证明过程中的引用链接
             proofProcessInput.addEventListener('input', renderProofReferences);
         }
 
-        // 渲染证明过程中的引用链接
         function renderProofReferences() {
             const proofProcess = document.getElementById('proofProcess');
             const proofText = proofProcess.value;
             
-            // 简单的引用检测和链接生成（这里只是示例，实际应用中可能需要更复杂的解析）
             let renderedText = proofText;
             notes.forEach(note => {
                 const regex = new RegExp(`\\b${note.name}\\b`, 'g');
                 renderedText = renderedText.replace(regex, `<span class="reference-link" onclick="navigateToReference('${note.name}')">${note.name}</span>`);
             });
-
-            // 注意：这里只是演示，实际应用中需要更复杂的处理
         }
 
-        // 导航到引用的定理
         function navigateToReference(theoremName) {
             const note = notes.find(n => n.name === theoremName);
             if (note) {
@@ -993,7 +1354,6 @@
             }
         }
 
-        // 拖动功能
         let draggedItem = null;
 
         function dragStart(e, type, id) {
@@ -1011,7 +1371,6 @@
             if (draggedItem) {
                 if (draggedItem.type === 'note') {
                     if (targetType === 'folder') {
-                        // 移动笔记到文件夹
                         const note = notes.find(n => n.id === draggedItem.id);
                         if (note) {
                             note.folderId = targetId;
@@ -1019,7 +1378,6 @@
                             renderNoteList();
                         }
                     } else if (targetType === 'root') {
-                        // 移动笔记到根目录
                         const note = notes.find(n => n.id === draggedItem.id);
                         if (note) {
                             note.folderId = null;
@@ -1029,10 +1387,8 @@
                     }
                 } else if (draggedItem.type === 'folder') {
                     if (targetType === 'folder') {
-                        // 移动文件夹到另一个文件夹
                         const folder = folders.find(f => f.id === draggedItem.id);
                         if (folder && folder.id !== targetId) {
-                            // 检查嵌套层级
                             if (checkNestedLevel(targetId) < 3) {
                                 folder.parentId = targetId;
                                 saveNotes();
@@ -1042,7 +1398,6 @@
                             }
                         }
                     } else if (targetType === 'root') {
-                        // 移动文件夹到根目录
                         const folder = folders.find(f => f.id === draggedItem.id);
                         if (folder) {
                             folder.parentId = null;
@@ -1055,7 +1410,6 @@
             }
         }
 
-        // 检查文件夹的嵌套层级
         function checkNestedLevel(folderId) {
             let level = 0;
             let currentFolderId = folderId;
@@ -1071,65 +1425,20 @@
             return level;
         }
 
-        // GitHub API 配置
-        const GITHUB_API_URL = 'https://api.github.com';
-        const GITHUB_OWNER = 'w2382507-alt';
-        const GITHUB_REPO = 'w2382507-alt.github.io';
-        
-        // 从 localStorage 获取 GitHub Token
-        function getGitHubToken() {
-            return localStorage.getItem('githubToken');
-        }
-        
-        // 保存 GitHub Token 到 localStorage
-        function saveGitHubToken(token) {
-            localStorage.setItem('githubToken', token);
-        }
-        
-        // 清除 GitHub Token
-        function clearGitHubToken() {
-            localStorage.removeItem('githubToken');
-        }
-        
-        // 提示用户输入 GitHub Token
-        function promptForGitHubToken() {
-            const token = prompt('请输入您的 GitHub Token（用于访问仓库）：');
-            if (token && token.trim()) {
-                saveGitHubToken(token.trim());
-                return token.trim();
-            }
-            return null;
-        }
-        
-        // 初始化 GitHub Token
-        function initGitHubToken() {
-            let token = getGitHubToken();
-            if (!token) {
-                token = promptForGitHubToken();
-            }
-            return token;
-        }
-        
-        // 获取当前有效的 GitHub Token
-        function getCurrentGitHubToken() {
-            let token = getGitHubToken();
-            if (!token) {
-                token = promptForGitHubToken();
-            }
-            return token;
-        }
-
-        // 导出笔记为 Markdown 格式
         async function exportNotes() {
+            const config = getGitHubConfig();
+            if (!config.owner || !config.repo) {
+                const newConfig = promptForGitHubConfig();
+                if (!newConfig) return;
+            }
+
             const fileName = prompt('请输入要保存的文件名（自动补全.md）：');
             if (!fileName) return;
 
             const fullFileName = fileName.endsWith('.md') ? fileName : fileName + '.md';
 
-            // 生成 Markdown 内容
             let markdownContent = `# 理科学习笔记\n\n`;
             
-            // 按文件夹组织笔记
             const rootNotes = notes.filter(note => !note.folderId);
             if (rootNotes.length > 0) {
                 markdownContent += `## 根目录\n\n`;
@@ -1138,7 +1447,6 @@
                 });
             }
 
-            // 处理文件夹内的笔记
             folders.forEach(folder => {
                 const folderNotes = notes.filter(note => note.folderId === folder.id);
                 if (folderNotes.length > 0) {
@@ -1150,15 +1458,12 @@
             });
 
             try {
-                // 检查文件是否存在
                 const fileExists = await checkFileExists(fullFileName);
                 
                 if (fileExists) {
-                    // 更新文件
                     await updateFile(fullFileName, markdownContent);
                     alert('笔记已成功更新到 GitHub 仓库！');
                 } else {
-                    // 创建新文件
                     await createFile(fullFileName, markdownContent);
                     alert('笔记已成功导出到 GitHub 仓库！');
                 }
@@ -1168,38 +1473,28 @@
             }
         }
 
-        // 导入笔记从 GitHub 仓库
         async function importNotes() {
+            const config = getGitHubConfig();
+            if (!config.owner || !config.repo) {
+                const newConfig = promptForGitHubConfig();
+                if (!newConfig) return;
+            }
+
             const fileName = prompt('请输入要导入的文件名（自动补全.md）：');
             if (!fileName) return;
 
-            // 确保文件名包含 .md 扩展名
             const fullFileName = fileName.endsWith('.md') ? fileName : fileName + '.md';
-            console.log('开始导入笔记文件:', fullFileName);
 
             try {
-                // 获取文件内容
-                console.log('正在从 GitHub 仓库获取文件内容...');
                 const fileContent = await getFileContent(fullFileName);
-                console.log('成功获取文件内容，长度:', fileContent.length);
-                console.log('文件内容前 500 字符:', fileContent.substring(0, 500));
-                
-                // 解析 Markdown 内容
-                console.log('开始解析 Markdown 内容...');
                 parseMarkdownContent(fileContent);
-                console.log('解析完成，当前笔记数量:', notes.length);
-                console.log('当前文件夹数量:', folders.length);
-                
                 alert('笔记已成功从 GitHub 仓库导入！');
             } catch (error) {
                 console.error('导入失败:', error);
-                console.error('错误详情:', error.message);
-                console.error('错误堆栈:', error.stack);
                 alert('导入失败，请检查文件名是否正确或文件是否存在。\n错误信息: ' + error.message);
             }
         }
 
-        // 生成单个笔记的 Markdown 内容
         function generateNoteMarkdown(note) {
             let content = `### ${note.name}\n\n`;
             content += `#### 证明过程\n${note.proof}\n\n`;
@@ -1215,29 +1510,19 @@
             return content;
         }
 
-        // 解析 Markdown 内容
         function parseMarkdownContent(content) {
-            console.log('开始解析 Markdown 内容...');
             const lines = content.split('\n');
             let currentFolder = null;
             let currentNote = null;
             let inProof = false;
             let inReferences = false;
-            let lineCount = 0;
 
             lines.forEach(line => {
-                lineCount++;
-                const originalLine = line;
                 line = line.trim();
                 
-                console.log(`处理第 ${lineCount} 行: "${originalLine}"`);
-                
-                // 处理文件夹标题
                 if (line.startsWith('## ')) {
                     const folderName = line.substring(3).trim();
-                    console.log(`发现文件夹标题: ${folderName}`);
                     if (folderName !== '根目录') {
-                        // 查找或创建文件夹
                         currentFolder = folders.find(f => f.name === folderName);
                         if (!currentFolder) {
                             currentFolder = {
@@ -1246,19 +1531,13 @@
                                 parentId: null
                             };
                             folders.push(currentFolder);
-                            console.log(`创建新文件夹: ${folderName}`);
-                        } else {
-                            console.log(`使用现有文件夹: ${folderName}`);
                         }
                     } else {
                         currentFolder = null;
-                        console.log('切换到根目录');
                     }
                 }
-                // 处理笔记标题
                 else if (line.startsWith('### ')) {
                     const noteName = line.substring(4).trim();
-                    console.log(`发现笔记标题: ${noteName}`);
                     currentNote = {
                         id: Date.now().toString(),
                         name: noteName,
@@ -1267,50 +1546,34 @@
                         folderId: currentFolder ? currentFolder.id : null
                     };
                     notes.push(currentNote);
-                    console.log(`创建新笔记: ${noteName}, 文件夹: ${currentFolder ? currentFolder.name : '根目录'}`);
                     inProof = false;
                     inReferences = false;
                 }
-                // 处理证明过程
                 else if (line.startsWith('#### 证明过程')) {
-                    console.log('进入证明过程部分');
                     inProof = true;
                     inReferences = false;
                 }
-                // 处理引用的其他定理
                 else if (line.startsWith('#### 引用的其他定理')) {
-                    console.log('进入引用的其他定理部分');
                     inProof = false;
                     inReferences = true;
                 }
-                // 处理内容行
                 else if (currentNote) {
                     if (inProof && line) {
                         currentNote.proof += line + '\n';
-                        console.log(`添加证明内容: ${line.substring(0, 50)}...`);
                     } else if (inReferences && line.startsWith('- ')) {
                         const ref = line.substring(2).trim();
                         currentNote.references.push(ref);
-                        console.log(`添加引用: ${ref}`);
                     }
                 }
             });
 
-            console.log('解析完成，共处理', lineCount, '行');
-            console.log('创建/更新的笔记数量:', notes.length);
-            console.log('创建/更新的文件夹数量:', folders.length);
-            
-            // 保存到本地存储
             saveNotes();
-            console.log('保存到本地存储');
-            // 重新渲染笔记列表
             renderNoteList();
-            console.log('重新渲染笔记列表');
         }
 
-        // 检查文件是否存在
         async function checkFileExists(filePath) {
-            const url = `${GITHUB_API_URL}/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${filePath}`;
+            const config = getGitHubConfig();
+            const url = `${GITHUB_API_URL}/repos/${config.owner}/${config.repo}/contents/${filePath}`;
             const token = getCurrentGitHubToken();
             
             if (!token) {
@@ -1326,7 +1589,6 @@
                 });
                 
                 if (response.status === 401) {
-                    // Token 无效或过期，清除本地 Token 并重新提示
                     clearGitHubToken();
                     promptForGitHubToken();
                     return false;
@@ -1338,19 +1600,16 @@
             }
         }
 
-        // 获取文件内容
         async function getFileContent(filePath) {
-            const url = `${GITHUB_API_URL}/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${filePath}`;
+            const config = getGitHubConfig();
+            const url = `${GITHUB_API_URL}/repos/${config.owner}/${config.repo}/contents/${filePath}`;
             const token = getCurrentGitHubToken();
             
             if (!token) {
                 throw new Error('GitHub Token 未设置');
             }
             
-            console.log('GitHub API URL:', url);
-            
             try {
-                console.log('发送请求到 GitHub API...');
                 const response = await fetch(url, {
                     headers: {
                         'Authorization': `token ${token}`,
@@ -1358,39 +1617,26 @@
                     }
                 });
                 
-                console.log('API 响应状态:', response.status);
-                console.log('API 响应状态文本:', response.statusText);
-                
                 if (response.status === 401) {
-                    // Token 无效或过期，清除本地 Token 并重新提示
                     clearGitHubToken();
                     const newToken = promptForGitHubToken();
                     if (!newToken) {
                         throw new Error('GitHub Token 未设置');
                     }
-                    // 重新尝试获取文件内容
                     return getFileContent(filePath);
                 }
                 
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => ({}));
-                    console.error('API 错误数据:', errorData);
                     throw new Error(`文件不存在或无法访问: ${response.status} - ${errorData.message || response.statusText}`);
                 }
                 
-                console.log('API 响应成功，正在解析数据...');
                 const data = await response.json();
-                console.log('API 响应数据类型:', typeof data);
-                console.log('API 响应数据包含 content:', 'content' in data);
                 
                 if (!data.content) {
                     throw new Error('文件内容不存在');
                 }
                 
-                console.log('文件内容长度:', data.content.length);
-                console.log('文件内容前 100 字符:', data.content.substring(0, 100));
-                
-                // 正确处理 UTF-8 编码
                 const binaryString = atob(data.content);
                 const len = binaryString.length;
                 const bytes = new Uint8Array(len);
@@ -1398,7 +1644,6 @@
                     bytes[i] = binaryString.charCodeAt(i);
                 }
                 const decodedContent = new TextDecoder('utf-8').decode(bytes);
-                console.log('解码后内容长度:', decodedContent.length);
                 return decodedContent;
             } catch (error) {
                 console.error('获取文件内容时出错:', error);
@@ -1406,16 +1651,15 @@
             }
         }
 
-        // 创建新文件
         async function createFile(filePath, content) {
-            const url = `${GITHUB_API_URL}/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${filePath}`;
+            const config = getGitHubConfig();
+            const url = `${GITHUB_API_URL}/repos/${config.owner}/${config.repo}/contents/${filePath}`;
             const token = getCurrentGitHubToken();
             
             if (!token) {
                 throw new Error('GitHub Token 未设置');
             }
             
-            // 正确处理 UTF-8 编码
             const encoder = new TextEncoder();
             const bytes = encoder.encode(content);
             let binaryString = '';
@@ -1437,13 +1681,11 @@
             });
             
             if (response.status === 401) {
-                // Token 无效或过期，清除本地 Token 并重新提示
                 clearGitHubToken();
                 const newToken = promptForGitHubToken();
                 if (!newToken) {
                     throw new Error('GitHub Token 未设置');
                 }
-                // 重新尝试创建文件
                 return createFile(filePath, content);
             }
             
@@ -1453,16 +1695,15 @@
             }
         }
 
-        // 更新文件
         async function updateFile(filePath, content) {
+            const config = getGitHubConfig();
             const token = getCurrentGitHubToken();
             
             if (!token) {
                 throw new Error('GitHub Token 未设置');
             }
             
-            // 首先获取文件的 sha
-            const url = `${GITHUB_API_URL}/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${filePath}`;
+            const url = `${GITHUB_API_URL}/repos/${config.owner}/${config.repo}/contents/${filePath}`;
             const getResponse = await fetch(url, {
                 headers: {
                     'Authorization': `token ${token}`,
@@ -1471,13 +1712,11 @@
             });
             
             if (getResponse.status === 401) {
-                // Token 无效或过期，清除本地 Token 并重新提示
                 clearGitHubToken();
                 const newToken = promptForGitHubToken();
                 if (!newToken) {
                     throw new Error('GitHub Token 未设置');
                 }
-                // 重新尝试更新文件
                 return updateFile(filePath, content);
             }
             
@@ -1488,7 +1727,6 @@
             const fileData = await getResponse.json();
             const sha = fileData.sha;
             
-            // 正确处理 UTF-8 编码
             const encoder = new TextEncoder();
             const bytes = encoder.encode(content);
             let binaryString = '';
@@ -1497,7 +1735,6 @@
             }
             const encodedContent = btoa(binaryString);
             
-            // 然后更新文件
             const putResponse = await fetch(url, {
                 method: 'PUT',
                 headers: {
@@ -1512,13 +1749,11 @@
             });
             
             if (putResponse.status === 401) {
-                // Token 无效或过期，清除本地 Token 并重新提示
                 clearGitHubToken();
                 const newToken = promptForGitHubToken();
                 if (!newToken) {
                     throw new Error('GitHub Token 未设置');
                 }
-                // 重新尝试更新文件
                 return updateFile(filePath, content);
             }
             
@@ -1528,7 +1763,6 @@
             }
         }
 
-        // 初始化应用
         initApp();
     </script>
 </body>
