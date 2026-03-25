@@ -1,0 +1,1769 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#2e3440">
+    <title>理科学习笔记 + 思维导图工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --sidebar-width: 260px;
+            --header-height: 60px;
+            --max-content-width: 1400px;
+            --primary-color: #5e81ac;
+            --primary-hover: #81a1c1;
+            --danger-color: #bf616a;
+            --danger-hover: #d08770;
+            --sidebar-bg: #2e3440;
+            --sidebar-text: #eceff4;
+            --bg-color: #f7f7f7;
+            --card-bg: #ffffff;
+            --border-color: #e0e0e0;
+            --text-color: #333;
+            --text-secondary: #666;
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 0.75rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --font-size-sm: 0.875rem;
+            --font-size-base: 1rem;
+            --font-size-lg: 1.125rem;
+            --font-size-xl: 1.25rem;
+            --border-radius: 8px;
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .app-wrapper {
+            max-width: var(--max-content-width);
+            margin: 0 auto;
+            min-height: 100vh;
+            background-color: var(--card-bg);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (min-width: 769px) {
+            .app-wrapper {
+                display: flex;
+                height: 100vh;
+                overflow: hidden;
+            }
+        }
+
+        .mobile-header {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--header-height);
+            background-color: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            padding: 0 var(--spacing-md);
+            align-items: center;
+            justify-content: space-between;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .mobile-header h1 {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: var(--sidebar-text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: var(--spacing-xs);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 44px;
+            min-height: 44px;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .menu-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            padding: var(--spacing-lg);
+            overflow-y: auto;
+            flex-shrink: 0;
+            position: relative;
+            transition: width 0.3s ease;
+        }
+
+        .sidebar.collapsed {
+            width: 60px;
+            padding: var(--spacing-lg) var(--spacing-sm);
+        }
+
+        .sidebar.collapsed h1,
+        .sidebar.collapsed .note-list,
+        .sidebar.collapsed .add-note-btn {
+            display: none;
+        }
+
+        .sidebar-toggle {
+            position: absolute;
+            top: var(--spacing-lg);
+            right: var(--spacing-sm);
+            background: linear-gradient(135deg, #4c566a 0%, #3b4252 100%);
+            border: 1px solid #5e81ac;
+            color: var(--sidebar-text);
+            font-size: 0.875rem;
+            cursor: pointer;
+            padding: var(--spacing-xs);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            transition: var(--transition);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .sidebar-toggle:hover {
+            background: linear-gradient(135deg, #5e81ac 0%, #4c566a 100%);
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .sidebar-toggle:active {
+            transform: scale(0.95);
+        }
+
+        .sidebar.collapsed .sidebar-toggle {
+            position: static;
+            margin: 0 auto;
+        }
+
+        .sidebar-toggle-icon {
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.collapsed .sidebar-toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .sidebar h1 {
+            font-size: var(--font-size-lg);
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-sm);
+            border-bottom: 1px solid #4c566a;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding-right: 40px;
+        }
+
+        .note-list {
+            list-style: none;
+        }
+
+        .note-item {
+            padding: var(--spacing-sm) var(--spacing-md);
+            margin-bottom: var(--spacing-xs);
+            background-color: #3b4252;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            font-size: var(--font-size-sm);
+            word-break: break-word;
+        }
+
+        .note-item:hover {
+            background-color: #4c566a;
+        }
+
+        .note-item.active {
+            background-color: var(--primary-color);
+        }
+
+        .add-note-btn {
+            width: 100%;
+            padding: var(--spacing-sm) var(--spacing-md);
+            margin-top: var(--spacing-md);
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: var(--font-size-sm);
+            transition: var(--transition);
+            min-height: 44px;
+        }
+
+        .add-note-btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .add-note-btn:active {
+            transform: scale(0.98);
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--card-bg);
+            min-width: 0;
+        }
+
+        .content-header {
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+        }
+
+        .content-title {
+            font-size: var(--font-size-xl);
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: var(--spacing-sm);
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: var(--font-size-sm);
+            transition: var(--transition);
+            white-space: nowrap;
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: var(--danger-hover);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .note-editor {
+            flex: 1;
+            padding: var(--spacing-lg);
+            overflow-y: auto;
+        }
+
+        .form-group {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: var(--spacing-sm);
+            font-weight: 500;
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-size: var(--font-size-base);
+            transition: var(--transition);
+            min-height: 44px;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(94, 129, 172, 0.2);
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-size: var(--font-size-base);
+            resize: vertical;
+            min-height: 200px;
+            font-family: inherit;
+            line-height: 1.6;
+            transition: var(--transition);
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(94, 129, 172, 0.2);
+        }
+
+        .mindmap-container {
+            flex: 1;
+            position: relative;
+            background-color: var(--bg-color);
+            border-top: 1px solid var(--border-color);
+        }
+
+        #mindmap {
+            width: 100%;
+            height: 100%;
+        }
+
+        .reference-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .reference-link:hover {
+            text-decoration: underline;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: var(--spacing-md);
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            margin: 10vh auto;
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius);
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .modal-title {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .close-btn:hover {
+            background-color: var(--bg-color);
+        }
+
+        .modal-actions {
+            margin-top: var(--spacing-lg);
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--spacing-sm);
+        }
+
+        .empty-message {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            font-size: var(--font-size-lg);
+            color: #999;
+            text-align: center;
+            padding: var(--spacing-xl);
+        }
+
+        .folder-item {
+            padding: var(--spacing-sm) var(--spacing-md);
+            margin-bottom: var(--spacing-xs);
+            cursor: pointer;
+            font-size: var(--font-size-sm);
+            word-break: break-word;
+        }
+
+        .folder-item .delete-folder-btn {
+            margin-left: var(--spacing-sm);
+            padding: 2px 8px;
+            font-size: 0.75rem;
+            background-color: var(--danger-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            min-height: 28px;
+        }
+
+        .drop-area {
+            margin-top: var(--spacing-lg);
+            margin-bottom: var(--spacing-md);
+            font-size: 0.75rem;
+            color: var(--primary-hover);
+            font-weight: 500;
+            padding: var(--spacing-sm) var(--spacing-xs);
+            border: 2px dashed #4c566a;
+            border-radius: var(--border-radius);
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            :root {
+                --header-height: 56px;
+                --spacing-lg: 1rem;
+                --spacing-xl: 1.5rem;
+            }
+
+            .mobile-header {
+                display: flex;
+            }
+
+            .app-wrapper {
+                padding-top: var(--header-height);
+            }
+
+            .sidebar {
+                position: fixed;
+                top: var(--header-height);
+                left: 0;
+                width: 100%;
+                height: calc(100vh - var(--header-height));
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                z-index: 999;
+                padding: var(--spacing-md);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .sidebar.collapsed {
+                width: 100%;
+                padding: var(--spacing-md);
+            }
+
+            .sidebar.collapsed h1,
+            .sidebar.collapsed .note-list,
+            .sidebar.collapsed .add-note-btn {
+                display: block;
+            }
+
+            .sidebar-toggle {
+                display: none;
+            }
+
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                top: var(--header-height);
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 998;
+            }
+
+            .sidebar-overlay.show {
+                display: block;
+            }
+
+            .content-header {
+                padding: var(--spacing-md);
+            }
+
+            .content-title {
+                font-size: var(--font-size-lg);
+                width: 100%;
+            }
+
+            .action-buttons {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .btn {
+                flex: 1;
+                min-width: 0;
+                font-size: 0.8125rem;
+                padding: var(--spacing-xs) var(--spacing-sm);
+            }
+
+            .note-editor {
+                padding: var(--spacing-md);
+            }
+
+            .form-textarea {
+                min-height: 150px;
+            }
+
+            .modal-content {
+                margin: 5vh auto;
+                padding: var(--spacing-md);
+            }
+        }
+
+        @media (max-width: 480px) {
+            :root {
+                --font-size-base: 1rem;
+            }
+
+            .btn {
+                font-size: 0.75rem;
+                padding: var(--spacing-xs) var(--spacing-xs);
+            }
+
+            .form-input,
+            .form-textarea {
+                font-size: 16px;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .mobile-header {
+                display: none !important;
+            }
+
+            .sidebar-overlay {
+                display: none !important;
+            }
+        }
+
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-wrapper">
+        <header class="mobile-header">
+            <h1>理科学习笔记</h1>
+            <button class="menu-toggle" onclick="toggleSidebar()" aria-label="切换菜单">
+                <span id="menuIcon">☰</span>
+            </button>
+        </header>
+
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+        <aside class="sidebar" id="sidebar">
+            <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleDesktopSidebar()" aria-label="收起侧边栏">
+                <span class="sidebar-toggle-icon">❮</span>
+            </button>
+            <h1>理科学习笔记</h1>
+            <ul class="note-list" id="noteList"></ul>
+            <button class="add-note-btn" onclick="addNewNote()">添加新笔记</button>
+            <button class="add-note-btn" onclick="addNewFolder()">添加文件夹</button>
+        </aside>
+
+        <main class="main-content">
+            <header class="content-header">
+                <h2 class="content-title" id="contentTitle">选择笔记</h2>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="generateMindmap()">生成思维导图</button>
+                    <button class="btn btn-primary" onclick="exportNotes()">导出笔记</button>
+                    <button class="btn btn-primary" onclick="importNotes()">导入笔记</button>
+                    <button class="btn btn-danger" onclick="deleteCurrentNote()">删除笔记</button>
+                </div>
+            </header>
+
+            <div class="note-editor" id="noteEditor">
+                <div class="empty-message" id="emptyNoteMessage">
+                    请选择笔记
+                </div>
+                <div id="noteForm" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label" for="theoremName">名称 *</label>
+                        <input type="text" class="form-input" id="theoremName" placeholder="请输入名称">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="proofProcess">描述 *</label>
+                        <textarea class="form-textarea" id="proofProcess" placeholder="请输入描述"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="references">引用的其他定理（用逗号分隔）</label>
+                        <input type="text" class="form-input" id="references" placeholder="例如：勾股定理, 三角形内角和定理">
+                    </div>
+                </div>
+            </div>
+
+            <div class="mindmap-container" id="mindmapContainer" style="display: none;">
+                <div id="mindmap"></div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal" id="deleteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">确认删除</h3>
+                <button class="close-btn" onclick="closeDeleteModal()" aria-label="关闭">&times;</button>
+            </div>
+            <p>确定要删除当前笔记吗？此操作不可恢复。</p>
+            <div class="modal-actions">
+                <button class="btn" onclick="closeDeleteModal()">取消</button>
+                <button class="btn btn-danger" onclick="confirmDeleteNote()">删除</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <script>
+        let notes = [];
+        let folders = [];
+        let currentNoteId = null;
+        let mindmapSvg = null;
+
+        const GITHUB_API_URL = 'https://api.github.com';
+
+        function getGitHubConfig() {
+            return {
+                owner: localStorage.getItem('githubOwner') || '',
+                repo: localStorage.getItem('githubRepo') || ''
+            };
+        }
+
+        function saveGitHubConfig(owner, repo) {
+            localStorage.setItem('githubOwner', owner);
+            localStorage.setItem('githubRepo', repo);
+        }
+
+        function getGitHubToken() {
+            return localStorage.getItem('githubToken');
+        }
+
+        function saveGitHubToken(token) {
+            localStorage.setItem('githubToken', token);
+        }
+
+        function clearGitHubToken() {
+            localStorage.removeItem('githubToken');
+        }
+
+        function promptForGitHubToken() {
+            const token = prompt('请输入您的 GitHub Token（用于访问仓库）：');
+            if (token && token.trim()) {
+                saveGitHubToken(token.trim());
+                return token.trim();
+            }
+            return null;
+        }
+
+        function promptForGitHubConfig() {
+            const config = getGitHubConfig();
+            const owner = prompt('请输入 GitHub 用户名：', config.owner);
+            if (!owner) return null;
+            const repo = prompt('请输入仓库名称：', config.repo);
+            if (!repo) return null;
+            saveGitHubConfig(owner.trim(), repo.trim());
+            return { owner: owner.trim(), repo: repo.trim() };
+        }
+
+        function initGitHubToken() {
+            let token = getGitHubToken();
+            if (!token) {
+                token = promptForGitHubToken();
+            }
+            const config = getGitHubConfig();
+            if (!config.owner || !config.repo) {
+                promptForGitHubConfig();
+            }
+            return token;
+        }
+
+        function getCurrentGitHubToken() {
+            let token = getGitHubToken();
+            if (!token) {
+                token = promptForGitHubToken();
+            }
+            return token;
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const menuIcon = document.getElementById('menuIcon');
+            
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('show');
+            menuIcon.textContent = sidebar.classList.contains('open') ? '✕' : '☰';
+        }
+
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const menuIcon = document.getElementById('menuIcon');
+            
+            sidebar.classList.remove('open');
+            overlay.classList.remove('show');
+            menuIcon.textContent = '☰';
+        }
+
+        function toggleDesktopSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.getElementById('sidebarToggle');
+            
+            sidebar.classList.toggle('collapsed');
+            
+            if (sidebar.classList.contains('collapsed')) {
+                toggleBtn.setAttribute('aria-label', '展开侧边栏');
+            } else {
+                toggleBtn.setAttribute('aria-label', '收起侧边栏');
+            }
+        }
+
+        function initApp() {
+            initGitHubToken();
+            loadNotes();
+            renderNoteList();
+            setupEventListeners();
+        }
+
+        function loadNotes() {
+            const storedNotes = localStorage.getItem('scienceNotes');
+            const storedFolders = localStorage.getItem('scienceFolders');
+            if (storedNotes) {
+                const parsedData = JSON.parse(storedNotes);
+                if (Array.isArray(parsedData)) {
+                    notes = parsedData;
+                } else if (parsedData.notes) {
+                    notes = parsedData.notes;
+                    if (parsedData.folders) {
+                        folders = parsedData.folders;
+                    }
+                } else {
+                    notes = [];
+                }
+            }
+            if (storedFolders && !folders.length) {
+                folders = JSON.parse(storedFolders);
+            }
+        }
+
+        function saveNotes() {
+            localStorage.setItem('scienceNotes', JSON.stringify(notes));
+            localStorage.setItem('scienceFolders', JSON.stringify(folders));
+        }
+
+        function renderNoteList() {
+            const noteList = document.getElementById('noteList');
+            noteList.innerHTML = '';
+
+            folders.filter(folder => !folder.parentId).forEach(folder => {
+                renderFolder(noteList, folder, 0);
+            });
+
+            const rootDropArea = document.createElement('li');
+            rootDropArea.className = 'drop-area';
+            rootDropArea.textContent = '根目录 - 拖放内容到此处';
+            rootDropArea.ondragover = (e) => dragOver(e);
+            rootDropArea.ondrop = (e) => drop(e, 'root', null);
+            noteList.appendChild(rootDropArea);
+
+            const rootNotes = notes.filter(note => !note.folderId);
+            if (rootNotes.length > 0) {
+                rootNotes.forEach(note => {
+                    const li = document.createElement('li');
+                    li.className = `note-item ${note.id === currentNoteId ? 'active' : ''}`;
+                    li.textContent = note.name;
+                    li.onclick = () => selectNote(note.id);
+                    li.draggable = true;
+                    li.ondragstart = (e) => dragStart(e, 'note', note.id);
+                    noteList.appendChild(li);
+                });
+            }
+        }
+
+        function renderFolder(parent, folder, level) {
+            const folderItem = document.createElement('li');
+            folderItem.className = 'folder-item';
+            folderItem.style.paddingLeft = `${level * 20}px`;
+            folderItem.innerHTML = `📁 ${folder.name} <button class="delete-folder-btn" onclick="event.stopPropagation(); deleteFolder('${folder.id}')">删除</button>`;
+            folderItem.ondblclick = () => renameFolder(folder.id);
+            folderItem.draggable = true;
+            folderItem.ondragstart = (e) => dragStart(e, 'folder', folder.id);
+            folderItem.ondragover = (e) => dragOver(e);
+            folderItem.ondrop = (e) => drop(e, 'folder', folder.id);
+            parent.appendChild(folderItem);
+
+            folders.filter(subFolder => subFolder.parentId === folder.id).forEach(subFolder => {
+                renderFolder(parent, subFolder, level + 1);
+            });
+
+            notes.filter(note => note.folderId === folder.id).forEach(note => {
+                const li = document.createElement('li');
+                li.className = `note-item ${note.id === currentNoteId ? 'active' : ''}`;
+                li.style.paddingLeft = `${(level + 1) * 30}px`;
+                
+                if (level === 0) {
+                    li.style.backgroundColor = '#3b4252';
+                    li.style.borderLeft = '4px solid #5e81ac';
+                } else if (level === 1) {
+                    li.style.backgroundColor = '#434c5e';
+                    li.style.borderLeft = '4px solid #81a1c1';
+                } else if (level === 2) {
+                    li.style.backgroundColor = '#4c566a';
+                    li.style.borderLeft = '4px solid #88c0d0';
+                }
+                
+                li.textContent = note.name;
+                li.onclick = () => selectNote(note.id);
+                li.draggable = true;
+                li.ondragstart = (e) => dragStart(e, 'note', note.id);
+                parent.appendChild(li);
+            });
+        }
+
+        function selectNote(noteId) {
+            currentNoteId = noteId;
+            const note = notes.find(n => n.id === noteId);
+            if (note) {
+                document.getElementById('contentTitle').textContent = note.name;
+                document.getElementById('theoremName').value = note.name;
+                document.getElementById('proofProcess').value = note.proof;
+                document.getElementById('references').value = note.references.join(', ');
+                document.getElementById('emptyNoteMessage').style.display = 'none';
+                document.getElementById('noteForm').style.display = 'block';
+                renderNoteList();
+                showEditor();
+                if (window.innerWidth <= 768) {
+                    closeSidebar();
+                }
+            }
+        }
+
+        function addNewNote() {
+            const newNote = {
+                id: Date.now().toString(),
+                name: '新定理',
+                proof: '',
+                references: [],
+                folderId: null
+            };
+            notes.push(newNote);
+            saveNotes();
+            document.getElementById('emptyNoteMessage').style.display = 'none';
+            document.getElementById('noteForm').style.display = 'block';
+            selectNote(newNote.id);
+        }
+
+        function addNewFolder() {
+            const folderName = prompt('请输入文件夹名称：');
+            if (folderName && folderName.trim()) {
+                const newFolder = {
+                    id: Date.now().toString(),
+                    name: folderName.trim(),
+                    parentId: null
+                };
+                folders.push(newFolder);
+                saveNotes();
+                renderNoteList();
+            }
+        }
+
+        function renameFolder(folderId) {
+            const folder = folders.find(f => f.id === folderId);
+            if (folder) {
+                const newName = prompt('请输入新的文件夹名称：', folder.name);
+                if (newName && newName.trim()) {
+                    folder.name = newName.trim();
+                    saveNotes();
+                    renderNoteList();
+                }
+            }
+        }
+
+        function deleteFolder(folderId) {
+            if (confirm('确定要删除此文件夹吗？文件夹内的内容将移到根目录。')) {
+                notes.forEach(note => {
+                    if (note.folderId === folderId) {
+                        note.folderId = null;
+                    }
+                });
+                
+                folders.forEach(subFolder => {
+                    if (subFolder.parentId === folderId) {
+                        subFolder.parentId = null;
+                    }
+                });
+                
+                folders = folders.filter(folder => folder.id !== folderId);
+                
+                saveNotes();
+                renderNoteList();
+            }
+        }
+
+        function deleteCurrentNote() {
+            if (currentNoteId) {
+                document.getElementById('deleteModal').style.display = 'block';
+            }
+        }
+
+        function confirmDeleteNote() {
+            if (currentNoteId) {
+                notes = notes.filter(note => note.id !== currentNoteId);
+                saveNotes();
+                currentNoteId = null;
+                document.getElementById('contentTitle').textContent = '选择笔记';
+                document.getElementById('theoremName').value = '';
+                document.getElementById('proofProcess').value = '';
+                document.getElementById('references').value = '';
+                document.getElementById('emptyNoteMessage').style.display = 'flex';
+                document.getElementById('noteForm').style.display = 'none';
+                renderNoteList();
+                closeDeleteModal();
+            }
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').style.display = 'none';
+        }
+
+        function generateMindmap() {
+            showMindmap();
+            drawMindmap();
+        }
+
+        function showEditor() {
+            document.getElementById('noteEditor').style.display = 'block';
+            document.getElementById('mindmapContainer').style.display = 'none';
+        }
+
+        function showMindmap() {
+            document.getElementById('noteEditor').style.display = 'none';
+            document.getElementById('mindmapContainer').style.display = 'block';
+        }
+
+        function drawMindmap() {
+            const container = document.getElementById('mindmap');
+            container.innerHTML = '';
+
+            const nodeLevels = calculateNodeLevels();
+            const maxLevel = Math.max(...Object.values(nodeLevels));
+
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            const nodeWidth = 120;
+            const nodeHeight = 60;
+            const levelHeight = height / (maxLevel + 2);
+
+            const zoom = d3.zoom()
+                .scaleExtent([0.1, 4])
+                .on('zoom', (event) => {
+                    g.attr('transform', event.transform);
+                });
+
+            mindmapSvg = d3.select('#mindmap')
+                .append('svg')
+                .attr('width', width)
+                .attr('height', height)
+                .call(zoom);
+
+            const g = mindmapSvg.append('g');
+
+            const levelNodes = {};
+            Object.entries(nodeLevels).forEach(([nodeId, level]) => {
+                if (!levelNodes[level]) {
+                    levelNodes[level] = [];
+                }
+                levelNodes[level].push(nodeId);
+            });
+
+            const optimizedPositions = optimizeNodePositions(levelNodes, nodeLevels);
+
+            const nodePositions = {};
+
+            notes.forEach(note => {
+                const nodeId = note.id;
+                const level = nodeLevels[note.id];
+                const position = optimizedPositions[nodeId];
+                const x = position.x;
+                const y = height - (level * levelHeight + levelHeight / 2);
+
+                nodePositions[nodeId] = { x, y };
+
+                const nodeGroup = g.append('g')
+                    .attr('class', 'mindmap-node')
+                    .datum(nodeId)
+                    .attr('transform', `translate(${x}, ${y})`)
+                    .call(d3.drag()
+                        .on('start', dragstarted)
+                        .on('drag', dragged)
+                        .on('end', dragended));
+
+                nodeGroup.append('rect')
+                    .attr('x', -nodeWidth / 2)
+                    .attr('y', -nodeHeight / 2)
+                    .attr('width', nodeWidth)
+                    .attr('height', nodeHeight)
+                    .attr('rx', 6)
+                    .attr('ry', 6)
+                    .attr('fill', '#3b4252')
+                    .attr('stroke', '#5e81ac')
+                    .attr('stroke-width', 1.5);
+
+                nodeGroup.append('text')
+                    .attr('x', 0)
+                    .attr('y', 0)
+                    .attr('text-anchor', 'middle')
+                    .attr('dominant-baseline', 'middle')
+                    .attr('fill', '#eceff4')
+                    .attr('font-size', '12px')
+                    .attr('font-weight', '500')
+                    .text(note.name)
+                    .call(wrapText, nodeWidth - 20);
+
+                nodeGroup.append('rect')
+                    .attr('x', -nodeWidth / 2)
+                    .attr('y', -nodeHeight / 2)
+                    .attr('width', nodeWidth)
+                    .attr('height', nodeHeight)
+                    .attr('fill', 'transparent')
+                    .style('cursor', 'pointer')
+                    .on('click', () => selectNote(nodeId));
+            });
+
+            notes.forEach(note => {
+                const sourceId = note.id;
+                const sourceLevel = nodeLevels[sourceId];
+                const sourcePosition = optimizedPositions[sourceId];
+                const sourceX = sourcePosition.x;
+                const sourceY = height - (sourceLevel * levelHeight + levelHeight / 2);
+
+                note.references.forEach(refName => {
+                    const targetNote = notes.find(n => n.name === refName);
+                    if (targetNote) {
+                        const targetId = targetNote.id;
+                        const targetLevel = nodeLevels[targetId];
+                        const targetPosition = optimizedPositions[targetId];
+                        const targetX = targetPosition.x;
+                        const targetY = height - (targetLevel * levelHeight + levelHeight / 2);
+
+                        g.append('path')
+                            .attr('d', `M ${targetX} ${targetY} C ${targetX} ${(sourceY + targetY) / 2}, ${sourceX} ${(sourceY + targetY) / 2}, ${sourceX} ${sourceY}`)
+                            .attr('stroke', '#999')
+                            .attr('stroke-width', 1.5)
+                            .attr('fill', 'none')
+                            .attr('class', 'mindmap-link')
+                            .attr('marker-end', 'url(#arrowhead)');
+                    }
+                });
+            });
+
+            function dragstarted(event, d) {
+                d3.select(this).raise();
+                d3.select(this).select('rect:first-child').attr('stroke', '#ff0000');
+            }
+
+            function dragged(event, d) {
+                d3.select(this).attr('transform', `translate(${event.x}, ${event.y})`);
+                updateLinks();
+            }
+
+            function dragended(event, d) {
+                d3.select(this).select('rect:first-child').attr('stroke', '#5e81ac');
+                const nodeId = d3.select(this).datum();
+                if (nodeId) {
+                    nodePositions[nodeId] = { x: event.x, y: event.y };
+                }
+            }
+
+            function optimizeNodePositions(levelNodes, nodeLevels) {
+                const positions = {};
+                const levels = Object.keys(levelNodes).map(Number).sort((a, b) => a - b);
+                
+                levels.forEach(level => {
+                    const nodes = levelNodes[level];
+                    const levelWidth = width / nodes.length;
+                    
+                    nodes.forEach((nodeId, index) => {
+                        const note = notes.find(n => n.id === nodeId);
+                        if (!note) return;
+                        
+                        let refXSum = 0;
+                        let refCount = 0;
+                        
+                        note.references.forEach(refName => {
+                            const refNote = notes.find(n => n.name === refName);
+                            if (refNote && positions[refNote.id]) {
+                                refXSum += positions[refNote.id].x;
+                                refCount++;
+                            }
+                        });
+                        
+                        let x;
+                        if (refCount > 0) {
+                            x = refXSum / refCount;
+                            const minX = index * levelWidth;
+                            const maxX = (index + 1) * levelWidth;
+                            x = Math.max(minX, Math.min(maxX, x));
+                        } else {
+                            x = (index + 0.5) * levelWidth;
+                        }
+                        
+                        positions[nodeId] = { x };
+                    });
+                });
+                
+                return positions;
+            }
+
+            if (g.select('#arrowhead').empty()) {
+                g.append('defs').append('marker')
+                    .attr('id', 'arrowhead')
+                    .attr('viewBox', '-0 -5 10 10')
+                    .attr('refX', 20)
+                    .attr('refY', 0)
+                    .attr('orient', 'auto')
+                    .attr('markerWidth', 6)
+                    .attr('markerHeight', 6)
+                    .attr('xoverflow', 'visible')
+                    .append('svg:path')
+                    .attr('d', 'M 0,-5 L 10 ,0 L 0,5')
+                    .attr('fill', '#999')
+                    .style('stroke', 'none');
+            }
+
+            function updateLinks() {
+                g.selectAll('.mindmap-link').remove();
+                
+                notes.forEach(note => {
+                    const sourceGroup = g.selectAll('.mindmap-node').filter(function() {
+                        return d3.select(this).datum() === note.id;
+                    });
+                    
+                    if (sourceGroup.size() > 0) {
+                        const sourceTransform = sourceGroup.attr('transform');
+                        const sourceX = parseFloat(sourceTransform.split(',')[0].replace('translate(', ''));
+                        const sourceY = parseFloat(sourceTransform.split(',')[1].replace(')', ''));
+
+                        note.references.forEach(refName => {
+                            const targetNote = notes.find(n => n.name === refName);
+                            if (targetNote) {
+                                const targetGroup = g.selectAll('.mindmap-node').filter(function() {
+                                    return d3.select(this).datum() === targetNote.id;
+                                });
+                                
+                                if (targetGroup.size() > 0) {
+                                    const targetTransform = targetGroup.attr('transform');
+                                    const targetX = parseFloat(targetTransform.split(',')[0].replace('translate(', ''));
+                                    const targetY = parseFloat(targetTransform.split(',')[1].replace(')', ''));
+
+                                    g.append('path')
+                                        .attr('d', `M ${targetX} ${targetY} C ${targetX} ${(sourceY + targetY) / 2}, ${sourceX} ${(sourceY + targetY) / 2}, ${sourceX} ${sourceY}`)
+                                        .attr('stroke', '#999')
+                                        .attr('stroke-width', 1.5)
+                                        .attr('fill', 'none')
+                                        .attr('class', 'mindmap-link')
+                                        .attr('marker-end', 'url(#arrowhead)');
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        }
+
+        function calculateNodeLevels() {
+            const levels = {};
+            const visited = new Set();
+            const processing = new Set();
+
+            function calculateLevel(noteId) {
+                if (visited.has(noteId)) {
+                    return levels[noteId];
+                }
+                if (processing.has(noteId)) {
+                    return 1;
+                }
+
+                const note = notes.find(n => n.id === noteId);
+                if (!note) return 0;
+
+                processing.add(noteId);
+                
+                let maxChildLevel = 0;
+                note.references.forEach(refName => {
+                    const refNote = notes.find(n => n.name === refName);
+                    if (refNote) {
+                        const childLevel = calculateLevel(refNote.id);
+                        maxChildLevel = Math.max(maxChildLevel, childLevel);
+                    }
+                });
+
+                levels[noteId] = maxChildLevel + 1;
+                processing.delete(noteId);
+                visited.add(noteId);
+                return levels[noteId];
+            }
+
+            notes.forEach(note => {
+                if (!visited.has(note.id)) {
+                    calculateLevel(note.id);
+                }
+            });
+
+            return levels;
+        }
+
+        function wrapText(text, width) {
+            text.each(function() {
+                const text = d3.select(this);
+                const words = text.text().split(/\s+/).reverse();
+                let word;
+                let line = [];
+                let lineNumber = 0;
+                const lineHeight = 1.2;
+                const y = text.attr('y');
+                const x = text.attr('x');
+                const dy = parseFloat(text.attr('dy') || 0);
+                let tspan = text.text(null).append('tspan').attr('x', x).attr('y', y).attr('dy', dy + 'em');
+
+                while (word = words.pop()) {
+                    line.push(word);
+                    tspan.text(line.join(' '));
+                    if (tspan.node().getComputedTextLength() > width) {
+                        line.pop();
+                        tspan.text(line.join(' '));
+                        line = [word];
+                        tspan = text.append('tspan').attr('x', x).attr('y', y).attr('dy', ++lineNumber * lineHeight + dy + 'em').text(word);
+                    }
+                }
+            });
+        }
+
+        function setupEventListeners() {
+            const theoremNameInput = document.getElementById('theoremName');
+            const proofProcessInput = document.getElementById('proofProcess');
+            const referencesInput = document.getElementById('references');
+
+            function saveCurrentNote() {
+                if (currentNoteId) {
+                    const note = notes.find(n => n.id === currentNoteId);
+                    if (note) {
+                        note.name = theoremNameInput.value;
+                        note.proof = proofProcessInput.value;
+                        note.references = referencesInput.value.split(/[,，]/).map(r => r.trim()).filter(r => r);
+                        saveNotes();
+                        renderNoteList();
+                    }
+                }
+            }
+
+            theoremNameInput.addEventListener('input', saveCurrentNote);
+            proofProcessInput.addEventListener('input', saveCurrentNote);
+            referencesInput.addEventListener('input', saveCurrentNote);
+
+            proofProcessInput.addEventListener('input', renderProofReferences);
+        }
+
+        function renderProofReferences() {
+            const proofProcess = document.getElementById('proofProcess');
+            const proofText = proofProcess.value;
+            
+            let renderedText = proofText;
+            notes.forEach(note => {
+                const regex = new RegExp(`\\b${note.name}\\b`, 'g');
+                renderedText = renderedText.replace(regex, `<span class="reference-link" onclick="navigateToReference('${note.name}')">${note.name}</span>`);
+            });
+        }
+
+        function navigateToReference(theoremName) {
+            const note = notes.find(n => n.name === theoremName);
+            if (note) {
+                selectNote(note.id);
+            }
+        }
+
+        let draggedItem = null;
+
+        function dragStart(e, type, id) {
+            draggedItem = { type, id };
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function dragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+
+        function drop(e, targetType, targetId) {
+            e.preventDefault();
+            if (draggedItem) {
+                if (draggedItem.type === 'note') {
+                    if (targetType === 'folder') {
+                        const note = notes.find(n => n.id === draggedItem.id);
+                        if (note) {
+                            note.folderId = targetId;
+                            saveNotes();
+                            renderNoteList();
+                        }
+                    } else if (targetType === 'root') {
+                        const note = notes.find(n => n.id === draggedItem.id);
+                        if (note) {
+                            note.folderId = null;
+                            saveNotes();
+                            renderNoteList();
+                        }
+                    }
+                } else if (draggedItem.type === 'folder') {
+                    if (targetType === 'folder') {
+                        const folder = folders.find(f => f.id === draggedItem.id);
+                        if (folder && folder.id !== targetId) {
+                            if (checkNestedLevel(targetId) < 3) {
+                                folder.parentId = targetId;
+                                saveNotes();
+                                renderNoteList();
+                            } else {
+                                alert('文件夹嵌套不能超过三层！');
+                            }
+                        }
+                    } else if (targetType === 'root') {
+                        const folder = folders.find(f => f.id === draggedItem.id);
+                        if (folder) {
+                            folder.parentId = null;
+                            saveNotes();
+                            renderNoteList();
+                        }
+                    }
+                }
+                draggedItem = null;
+            }
+        }
+
+        function checkNestedLevel(folderId) {
+            let level = 0;
+            let currentFolderId = folderId;
+            while (currentFolderId) {
+                const folder = folders.find(f => f.id === currentFolderId);
+                if (folder) {
+                    level++;
+                    currentFolderId = folder.parentId;
+                } else {
+                    break;
+                }
+            }
+            return level;
+        }
+
+        async function exportNotes() {
+            const config = getGitHubConfig();
+            if (!config.owner || !config.repo) {
+                const newConfig = promptForGitHubConfig();
+                if (!newConfig) return;
+            }
+
+            const fileName = prompt('请输入要保存的文件名（自动补全.md）：');
+            if (!fileName) return;
+
+            const fullFileName = fileName.endsWith('.md') ? fileName : fileName + '.md';
+
+            let markdownContent = `# 理科学习笔记\n\n`;
+            
+            const rootNotes = notes.filter(note => !note.folderId);
+            if (rootNotes.length > 0) {
+                markdownContent += `## 根目录\n\n`;
+                rootNotes.forEach(note => {
+                    markdownContent += generateNoteMarkdown(note);
+                });
+            }
+
+            folders.forEach(folder => {
+                const folderNotes = notes.filter(note => note.folderId === folder.id);
+                if (folderNotes.length > 0) {
+                    markdownContent += `## ${folder.name}\n\n`;
+                    folderNotes.forEach(note => {
+                        markdownContent += generateNoteMarkdown(note);
+                    });
+                }
+            });
+
+            try {
+                const fileExists = await checkFileExists(fullFileName);
+                
+                if (fileExists) {
+                    await updateFile(fullFileName, markdownContent);
+                    alert('笔记已成功更新到 GitHub 仓库！');
+                } else {
+                    await createFile(fullFileName, markdownContent);
+                    alert('笔记已成功导出到 GitHub 仓库！');
+                }
+            } catch (error) {
+                console.error('导出失败:', error);
+                alert('导出失败，请检查网络连接或 GitHub API 配置。');
+            }
+        }
+
+        async function importNotes() {
+            const config = getGitHubConfig();
+            if (!config.owner || !config.repo) {
+                const newConfig = promptForGitHubConfig();
+                if (!newConfig) return;
+            }
+
+            const fileName = prompt('请输入要导入的文件名（自动补全.md）：');
+            if (!fileName) return;
+
+            const fullFileName = fileName.endsWith('.md') ? fileName : fileName + '.md';
+
+            try {
+                const fileContent = await getFileContent(fullFileName);
+                parseMarkdownContent(fileContent);
+                alert('笔记已成功从 GitHub 仓库导入！');
+            } catch (error) {
+                console.error('导入失败:', error);
+                alert('导入失败，请检查文件名是否正确或文件是否存在。\n错误信息: ' + error.message);
+            }
+        }
+
+        function generateNoteMarkdown(note) {
+            let content = `### ${note.name}\n\n`;
+            content += `#### 证明过程\n${note.proof}\n\n`;
+            
+            if (note.references && note.references.length > 0) {
+                content += `#### 引用的其他定理\n`;
+                note.references.forEach(ref => {
+                    content += `- ${ref}\n`;
+                });
+                content += `\n`;
+            }
+            
+            return content;
+        }
+
+        function parseMarkdownContent(content) {
+            const lines = content.split('\n');
+            let currentFolder = null;
+            let currentNote = null;
+            let inProof = false;
+            let inReferences = false;
+
+            lines.forEach(line => {
+                line = line.trim();
+                
+                if (line.startsWith('## ')) {
+                    const folderName = line.substring(3).trim();
+                    if (folderName !== '根目录') {
+                        currentFolder = folders.find(f => f.name === folderName);
+                        if (!currentFolder) {
+                            currentFolder = {
+                                id: Date.now().toString(),
+                                name: folderName,
+                                parentId: null
+                            };
+                            folders.push(currentFolder);
+                        }
+                    } else {
+                        currentFolder = null;
+                    }
+                }
+                else if (line.startsWith('### ')) {
+                    const noteName = line.substring(4).trim();
+                    currentNote = {
+                        id: Date.now().toString(),
+                        name: noteName,
+                        proof: '',
+                        references: [],
+                        folderId: currentFolder ? currentFolder.id : null
+                    };
+                    notes.push(currentNote);
+                    inProof = false;
+                    inReferences = false;
+                }
+                else if (line.startsWith('#### 证明过程')) {
+                    inProof = true;
+                    inReferences = false;
+                }
+                else if (line.startsWith('#### 引用的其他定理')) {
+                    inProof = false;
+                    inReferences = true;
+                }
+                else if (currentNote) {
+                    if (inProof && line) {
+                        currentNote.proof += line + '\n';
+                    } else if (inReferences && line.startsWith('- ')) {
+                        const ref = line.substring(2).trim();
+                        currentNote.references.push(ref);
+                    }
+                }
+            });
+
+            saveNotes();
+            renderNoteList();
+        }
+
+        async function checkFileExists(filePath) {
+            const config = getGitHubConfig();
+            const url = `${GITHUB_API_URL}/repos/${config.owner}/${config.repo}/contents/${filePath}`;
+            const token = getCurrentGitHubToken();
+            
+            if (!token) {
+                return false;
+            }
+            
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+                
+                if (response.status === 401) {
+                    clearGitHubToken();
+                    promptForGitHubToken();
+                    return false;
+                }
+                
+                return response.status === 200;
+            } catch (error) {
+                return false;
+            }
+        }
+
+        async function getFileContent(filePath) {
+            const config = getGitHubConfig();
+            const url = `${GITHUB_API_URL}/repos/${config.owner}/${config.repo}/contents/${filePath}`;
+            const token = getCurrentGitHubToken();
+            
+            if (!token) {
+                throw new Error('GitHub Token 未设置');
+            }
+            
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+                
+                if (response.status === 401) {
+                    clearGitHubToken();
+                    const newToken = promptForGitHubToken();
+                    if (!newToken) {
+                        throw new Error('GitHub Token 未设置');
+                    }
+                    return getFileContent(filePath);
+                }
+                
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(`文件不存在或无法访问: ${response.status} - ${errorData.message || response.statusText}`);
+                }
+                
+                const data = await response.json();
+                
+                if (!data.content) {
+                    throw new Error('文件内容不存在');
+                }
+                
+                const binaryString = atob(data.content);
+                const len = binaryString.length;
+                const bytes = new Uint8Array(len);
+                for (let i = 0; i < len; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                const decodedContent = new TextDecoder('utf-8').decode(bytes);
+                return decodedContent;
+            } catch (error) {
+                console.error('获取文件内容时出错:', error);
+                throw error;
+            }
+        }
+
+        async function createFile(filePath, content) {
+            const config = getGitHubConfig();
+            const url = `${GITHUB_API_URL}/repos/${config.owner}/${config.repo}/contents/${filePath}`;
+            const token = getCurrentGitHubToken();
+            
+            if (!token) {
+                throw new Error('GitHub Token 未设置');
+            }
+            
+            const encoder = new TextEncoder();
+            const bytes = encoder.encode(content);
+            let binaryString = '';
+            for (let i = 0; i < bytes.length; i++) {
+                binaryString += String.fromCharCode(bytes[i]);
+            }
+            const encodedContent = btoa(binaryString);
+            
+            const response = await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                },
+                body: JSON.stringify({
+                    message: `添加笔记文件: ${filePath}`,
+                    content: encodedContent
+                })
+            });
+            
+            if (response.status === 401) {
+                clearGitHubToken();
+                const newToken = promptForGitHubToken();
+                if (!newToken) {
+                    throw new Error('GitHub Token 未设置');
+                }
+                return createFile(filePath, content);
+            }
+            
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(`创建文件失败: ${error.message}`);
+            }
+        }
+
+        async function updateFile(filePath, content) {
+            const config = getGitHubConfig();
+            const token = getCurrentGitHubToken();
+            
+            if (!token) {
+                throw new Error('GitHub Token 未设置');
+            }
+            
+            const url = `${GITHUB_API_URL}/repos/${config.owner}/${config.repo}/contents/${filePath}`;
+            const getResponse = await fetch(url, {
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            });
+            
+            if (getResponse.status === 401) {
+                clearGitHubToken();
+                const newToken = promptForGitHubToken();
+                if (!newToken) {
+                    throw new Error('GitHub Token 未设置');
+                }
+                return updateFile(filePath, content);
+            }
+            
+            if (!getResponse.ok) {
+                throw new Error(`获取文件信息失败: ${getResponse.status}`);
+            }
+            
+            const fileData = await getResponse.json();
+            const sha = fileData.sha;
+            
+            const encoder = new TextEncoder();
+            const bytes = encoder.encode(content);
+            let binaryString = '';
+            for (let i = 0; i < bytes.length; i++) {
+                binaryString += String.fromCharCode(bytes[i]);
+            }
+            const encodedContent = btoa(binaryString);
+            
+            const putResponse = await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                },
+                body: JSON.stringify({
+                    message: `更新笔记文件: ${filePath}`,
+                    content: encodedContent,
+                    sha: sha
+                })
+            });
+            
+            if (putResponse.status === 401) {
+                clearGitHubToken();
+                const newToken = promptForGitHubToken();
+                if (!newToken) {
+                    throw new Error('GitHub Token 未设置');
+                }
+                return updateFile(filePath, content);
+            }
+            
+            if (!putResponse.ok) {
+                const error = await putResponse.json();
+                throw new Error(`更新文件失败: ${error.message}`);
+            }
+        }
+
+        initApp();
+    </script>
+</body>
+</html>
