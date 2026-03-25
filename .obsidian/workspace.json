@@ -11,12 +11,14 @@
             "id": "831561d9374c77af",
             "type": "leaf",
             "state": {
-              "type": "release-notes",
+              "type": "markdown",
               "state": {
-                "currentVersion": "1.12.7"
+                "file": "calculus/不好.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-book-up",
-              "title": "版本说明 1.12.7"
+              "icon": "lucide-file",
+              "title": "不好"
             }
           }
         ]
