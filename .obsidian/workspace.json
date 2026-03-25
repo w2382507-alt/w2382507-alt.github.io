@@ -4,45 +4,20 @@
     "type": "split",
     "children": [
       {
-        "id": "357e69f5727cd17e",
+        "id": "08e5aca715f8525e",
         "type": "tabs",
         "children": [
           {
-            "id": "190f19688cdb9042",
-            "type": "leaf",
-            "pinned": true,
-            "state": {
-              "type": "juggl_view",
-              "state": {},
-              "pinned": true,
-              "icon": "lucide-file",
-              "title": "Juggl"
-            }
-          },
-          {
-            "id": "f4aaccc743534efe",
+            "id": "831561d9374c77af",
             "type": "leaf",
             "state": {
-              "type": "juggl-help",
+              "type": "empty",
               "state": {},
               "icon": "lucide-file",
-              "title": "Juggl help"
-            }
-          },
-          {
-            "id": "a2c4465e3824ffde",
-            "type": "leaf",
-            "pinned": true,
-            "state": {
-              "type": "juggl_view",
-              "state": {},
-              "pinned": true,
-              "icon": "lucide-file",
-              "title": "Juggl"
+              "title": "新标签页"
             }
           }
-        ],
-        "currentTab": 2
+        ]
       }
     ],
     "direction": "vertical"
@@ -191,14 +166,23 @@
               "icon": "ag-style",
               "title": "Juggl style"
             }
+          },
+          {
+            "id": "8c4b554e02586485",
+            "type": "leaf",
+            "state": {
+              "type": "git-view",
+              "state": {},
+              "icon": "git-pull-request",
+              "title": "Source Control"
+            }
           }
         ],
-        "currentTab": 3
+        "currentTab": 6
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -209,10 +193,11 @@
       "daily-notes:打开/创建今天的日记": false,
       "templates:插入模板": false,
       "command-palette:打开命令面板": false,
-      "juggl:Juggl global graph": false
+      "juggl:Juggl global graph": false,
+      "obsidian-git:Open Git source control": false
     }
   },
-  "active": "a2c4465e3824ffde",
+  "active": "8c4b554e02586485",
   "lastOpenFiles": [
     "Pasted image 20260116022518.png",
     "calculus/很好.md",
