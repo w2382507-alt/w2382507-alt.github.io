@@ -1,6 +1,6 @@
 {
-  "collapse-filter": true,
-  "search": "",
+  "collapse-filter": false,
+  "search": "path:calculus  ",
   "showTags": false,
   "showAttachments": false,
   "hideUnresolved": false,
@@ -10,13 +10,13 @@
   "collapse-display": false,
   "showArrow": true,
   "textFadeMultiplier": 0,
-  "nodeSizeMultiplier": 1,
+  "nodeSizeMultiplier": 1.69879446640316,
   "lineSizeMultiplier": 2.46522491349481,
   "collapse-forces": false,
   "centerStrength": 0.518713248970312,
   "repelStrength": 10,
   "linkStrength": 1,
   "linkDistance": 250,
-  "scale": 2.0707092497453017,
-  "close": false
+  "scale": 3.221267211862585,
+  "close": true
 }
