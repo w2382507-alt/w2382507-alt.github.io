@@ -1,6 +1,6 @@
 {
   "collapse-filter": false,
-  "search": "path:calculus  ",
+  "search": "path:Linear-Algebra  ",
   "showTags": false,
   "showAttachments": false,
   "hideUnresolved": false,
@@ -22,16 +22,16 @@
       }
     }
   ],
-  "collapse-display": false,
+  "collapse-display": true,
   "showArrow": true,
   "textFadeMultiplier": 0,
   "nodeSizeMultiplier": 1.69879446640316,
   "lineSizeMultiplier": 2.46522491349481,
   "collapse-forces": false,
-  "centerStrength": 0.518713248970312,
-  "repelStrength": 10,
+  "centerStrength": 0.504940711462451,
+  "repelStrength": 12.9446640316206,
   "linkStrength": 1,
   "linkDistance": 250,
-  "scale": 1.3527114477489481,
+  "scale": 1.263045655708704,
   "close": true
 }
