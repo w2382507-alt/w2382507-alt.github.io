@@ -155,7 +155,23 @@ Julian dates (HJD).
 
   
 
-1. **打开核心数据库**：登录[LCDB小行星光变数据库](https://sbn.psi.edu/pds/resource/lc.html)、JPL Horizons星历系统、MPC小行星数据库；
+1. **打开核心数据库**：登录[LCDB小行星光变数据库](https://sbn.psi.edu/pds/resource/lc.html)、**JPL Horizons星历系统([What's Observable?](https://ssd.jpl.nasa.gov/tools/sbwobs.html#/))**、MPC小行星数据库；
+	筛选条件：
+	- Location: 
+		- longitude 75 06 57 
+		- latitude 38 16 32
+		- altitude 4500
+	- Visual magnitude: <=15?
+	- Object Kind
+		- object kind: asteroids
+		- numbered state: all objects?
+		- comet fragments
+	- Orbit Class: Main-belt Asteroid
+	- Constraints:
+		- rot_per <= 12h?
+
+
+"19759","2000 GU146","2000 GU146","502","A","S","C","-","6.67","M","13.3","V","A","0.24","-9.99","A","-","0.19","-","4.74149","-","-","0.59","0.66","2","-","-","Y","DWF","N","N"
 
   
 
@@ -205,7 +221,8 @@ Julian dates (HJD).
 
     - 备份2-3颗备选目标，应对天气、观测条件变化。
 
-  
+
+
 
 ---
 
