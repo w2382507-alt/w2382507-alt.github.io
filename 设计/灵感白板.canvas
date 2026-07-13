@@ -1,0 +1,23 @@
+{
+	"nodes":[
+		{"id":"74e8efd5c5708ae3","type":"file","file":"设计/attachments/Pasted image 20260714012158.png","x":-340,"y":-80,"width":400,"height":305},
+		{"id":"da3daab8ba272949","type":"text","text":"随身物品展示个人特质：图片中烟和火机说明是个抽烟的人，有线耳机暗示是一个复古、喜欢英语的人。","x":160,"y":-20,"width":250,"height":130},
+		{"id":"8c009e27908a64de","type":"text","text":"可以看作是拼贴艺术的一种，用微小且风格统一的部件组合成一个完整的作品","x":160,"y":140,"width":250,"height":120,"color":"3"},
+		{"id":"54938f3c173f9b17","type":"text","text":"对一个传统物品的重新解构，基于其外在特点，赋予新的功能，这种创意很吸引人，手指滑板和有线耳机的结合也是利用这种效果","x":-265,"y":300,"width":250,"height":160},
+		{"id":"abe1d749a393b8f5","x":-257,"y":620,"width":234,"height":400,"type":"file","file":"设计/attachments/屏幕截图 2026-07-14 013038.png"},
+		{"id":"63ad2748a6cc9eb5","x":500,"y":-2,"width":400,"height":223,"type":"file","file":"设计/attachments/memory_box.png"},
+		{"id":"f2e1bb3cd6b979fc","x":160,"y":320,"width":250,"height":160,"color":"3","type":"text","text":"元素之间相互覆盖、重叠，创造出整体的层次感。主题位置需要放置带有内容的物品，而次要的位置主要哦以装饰品为主"},
+		{"id":"6fdc7ec989bc2983","x":450,"y":370,"width":250,"height":60,"type":"text","text":"月球与建筑作为主体，扮演者夜晚与白天的视觉焦点"},
+		{"id":"12cbae9ba1c6309f","x":783,"y":260,"width":234,"height":400,"type":"file","file":"设计/attachments/月球.png"}
+	],
+	"edges":[
+		{"id":"0614b4e3f5336712","fromNode":"da3daab8ba272949","fromSide":"left","toNode":"74e8efd5c5708ae3","toSide":"right"},
+		{"id":"945e1a25d91d1b70","fromNode":"8c009e27908a64de","fromSide":"left","toNode":"74e8efd5c5708ae3","toSide":"right"},
+		{"id":"f41fe4354c1c11b9","fromNode":"74e8efd5c5708ae3","fromSide":"bottom","toNode":"54938f3c173f9b17","toSide":"top"},
+		{"id":"f67360d2685a3a3d","fromNode":"abe1d749a393b8f5","fromSide":"top","toNode":"54938f3c173f9b17","toSide":"bottom"},
+		{"id":"36853efbb097cbd6","fromNode":"8c009e27908a64de","fromSide":"right","toNode":"63ad2748a6cc9eb5","toSide":"left"},
+		{"id":"64f01da3bba094e2","fromNode":"f2e1bb3cd6b979fc","fromSide":"top","toNode":"8c009e27908a64de","toSide":"bottom"},
+		{"id":"5891a05c26e549b2","fromNode":"f2e1bb3cd6b979fc","fromSide":"right","toNode":"6fdc7ec989bc2983","toSide":"left"},
+		{"id":"5c7529693434ecb8","fromNode":"6fdc7ec989bc2983","fromSide":"right","toNode":"12cbae9ba1c6309f","toSide":"left"}
+	]
+}
