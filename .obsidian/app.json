@@ -1,4 +1,5 @@
 {
   "livePreview": false,
-  "attachmentFolderPath": "./attachments"
+  "attachmentFolderPath": "./attachments",
+  "alwaysUpdateLinks": true
 }
