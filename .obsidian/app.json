@@ -1,5 +1,7 @@
 {
   "livePreview": false,
   "attachmentFolderPath": "./attachments",
-  "alwaysUpdateLinks": true
+  "alwaysUpdateLinks": true,
+  "defaultViewMode": "preview",
+  "autoConvertHtml": true
 }
