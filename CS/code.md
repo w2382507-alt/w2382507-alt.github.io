@@ -84,7 +84,20 @@
 		- 类、函数和变量便是C++编译器的标准组件，它们现在都被放置在名称空间std中
 		- using namespace std;后可省略std::
 		- using std::cout; 后可省略cout变量的std::
-	- 
+	- 全局名称空间
+	- 局部名称空间
+	- 自定义名称空间
+		- ```c++
+		  namespace namespace_namae{
+		  \\代码声明
+		  };
+		  ```
+		- 不连续性：命名空间可以定义在几个不同的部分中，一个命名空间的各个组成部分可以分散在多个文件中。
+		- 使用
+			- 直接使用`namespace_name::value_name`
+			- using声明`using namespace_name::value_name`
+			- using编译指令`using namespace_name`
+	- 在头文件中的命名空间也要保证不出现头文件里不该出现的东西，比如说变量
 - 输入/输出
   - 转义字符
     - - ![](https://api2.mubu.com/v3/document_image/1970090_510b52a4-d263-448c-d1c6-9a33d59dfe60.png)
