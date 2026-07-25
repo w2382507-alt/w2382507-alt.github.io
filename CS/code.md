@@ -27,7 +27,7 @@
   - // 本行后为注释
   - /\*\*/ 中间为注释
 - 头文件
-  - # include <头文件名>
+  - \# include <头文件名>
   - c/c++
     - stdio.h
     - string.h/cstring
@@ -60,6 +60,21 @@
       - DWORD
         - typedef unsigned long DWORD;
         - 四个字节无符号整型
+	- tchar.h
+		- 如果使用ANSI编译
+			- 使用窄字节
+			- typedef TCHAR CHAR
+			- typedef LPTSTR LPSTR 即char*
+			- typedef LPCTSTR LPCSTR 即const char*
+		- 如果使用UNICODE编译
+			- 使用宽字节
+			- typedef TCHAR WCHAR 即wchar_t
+			- typedef LPTSTR LPWSTR 即wchar_t*
+			- typedef LPCTSTR LPCWSTR 即const wchar_t*
+	- wchar.h
+		- c语言没有内置，c++内置
+		- wchar_t 大小由平台决定，win上为2字节字符，使用UTF-16编码
+		- 字符串前加 L，表示为wchar_t *常量
     - ctype.h/cctype
       - - ![](https://api2.mubu.com/v3/document_image/1970090_90dedfab-16a4-4792-d4f6-6d249ef5d86f.png)
     - stdbool.h
@@ -69,10 +84,10 @@
         - 生成一个伪随机整数0~RAND\_MAX
         - 范围 [a,b] : rand() % (b - a + 1) + a
     - math.h/cmath
-      - double pow(double x, double y)
-        - 返回 x 的 y 次幂
-      - double sqrt(double x)
-        - 返回 x 的平方根
+	    - double pow(double x, double y)
+	        - 返回 x 的 y 次幂
+	    - double sqrt(double x)
+	        - 返回 x 的平方根
   - c++
     - iostream
     - fstream
@@ -321,7 +336,7 @@
 					    - typeName \* pointer\_name = new typeName;
 				    - 动态数组
 					    - typeName \* pointer\_name = new typeName [num];
-				-初始化
+				- 初始化
 					- `int* pi = new int (6)`
 					- `int* ar = new`
 			    - 动态结构
@@ -331,7 +346,7 @@
 			        - 间接成员运算符 ->
 			    - new 运算符依据类型确定所需内存字节数，找到内存后返回其指针
 			    - delete释放内存
-				    - delete pt;
+					- delete pt;
 				    - delete [] pt;
 				    - delete释放的是指针所指向的地址处被new分配的内存，而非指针
 	- 整型
@@ -647,7 +662,20 @@
 		- 编译
 		- 汇编
 		- 链接
-
+- 字符编码
+	- ascii码
+		- 单字节，剩余没用的高位作为奇偶校验位
+		- 0->48
+		- A->65
+		- a->97
+	- ANSI
+		- 当一个字节数据的最高位是0的时候代表是单字节，按照ASCII表进行编码的
+		- 当一个字节数据的最高位是1的时候，代表是本地化扩展字符（例如gbk编码表），需要用将相邻的两个字节组成一个整体，来进行码值求取，得到的码值对应的本地化的字符集可以得到相应的字符是什么
+		- 单字节字符集：第一个字符（0x80~0xFF）映射对应特殊字符
+		- 双字节字符集：使用两个字符表示一个字，两个字节的值都在0x80~0xFF
+	- Unicode
+		- Unicode是一个字符集，给所有的字符分配一个码值。这里面只是分配码值，而不是最后的编码实现，编码的实现有很多不同的方式如utf-8、utf-16、utf-32
+		- 
 
 - 无法改变指向的值得指针，const int \*pt
 - 无法改变代表的值的引用，const int & name = ？
