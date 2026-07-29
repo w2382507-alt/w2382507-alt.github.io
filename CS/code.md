@@ -659,14 +659,14 @@
 			- 删除注释
 			- 处理条件编译`#ifdef`、`#endif`、`#pragma once`
 				- 法1：
-					```python
+					```c++
 					#ifndef NAME_H_
 					#define NAME_H_
 					// place include file contents here
 					#endif
 					```
 				- 法2：
-					```python
+					```c++
 					#progma once
 					// place include file contents here
 		- 编译
@@ -692,6 +692,36 @@
 		- 定义时，使用作用域解析运算符`::`来标识所属的类
 		- 定义与类声明内的函数都为内联函数
 		- 可以访问类内的private组件
+		- 构造函数
+			- 调用
+				- 
+					```c++
+					class Stock
+					{
+					public:
+						Stock(int x){a = x;};
+					private:
+						int a;
+					}
+					//以下都是等价的调用方式
+					Stock o1 = Stock(1);
+					Stock o1(1);
+					Stock* pstock = new Stock(1);
+					```
+			- 默认构造函数
+				- 当没有定义任何构造函数时才会自动提供默认构造函数
+				- 当定义了构造函数，需要自己定义默认构造函数
+					- 法1：为构造函数的所有参数提供默认值
+					- 法2：重构一个没有参数的构造函数
+				- 调用
+					- 显式 `Stock o1 = Stock();`
+					- 隐式 `Stock o1;`
+					- 注意 `Stock o1();` 是在声明一个返回Stock类的函数
+		- 析构函数
+		- const 成员函数
+			- 声明/定义：返回值 函数名(参数列表) const;/{}
+			- 不会修改类对象当中成员的函数
+			- 当类对象是const类型时，只能调用const成员变量
 - 无法改变指向的值得指针，const int \*pt
 - 无法改变代表的值的引用，const int & name = ？
 - 无法改变所指的指针，int \* const pt
