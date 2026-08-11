@@ -12,5 +12,5 @@
 		 \---
 	
 	- 下边就正常用自然语言编写提示词
-3. reference文件夹内放置被参考的文件，当被SKILL.md要求调用的时候会一并传给大模型
-4. script文件夹内放置被执行的文件，当被SKILL.md要求调用时会被agent运行
+3. references文件夹内放置被参考的文件，当被SKILL.md要求调用的时候会一并传给大模型
+4. scripts文件夹内放置被执行的文件，当被SKILL.md要求调用时会被agent运行
