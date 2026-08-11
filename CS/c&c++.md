@@ -239,51 +239,51 @@
       - auto typeName = 初始值
       - 根据初始值默认类型设置变量类型
 - 函数
-  - 创建新函数
-    - 提供函数定义
-      - type functionname(parameterlist) {statements... return 返回值; }
-        有返回值
-      - void functionname(parameterlist) { statements }
-        无返回值
-        - 可以使用return; 退出函数
-      - 函数在执行第一条返回语句后结束
-    - 提供函数原型
-      - 原型语句
-        - double sqrt(double)**;**
-          一定要加;
-    - 调用函数
-  - 库函数
-    - 库文件（namespace）包含函数的编译代码，头文件（#include)包含原型
-  - 函数参数
-    - 参数内存
-      - 函数被调用时，计算机为变量分配内存
-      - 函数结束时，计算机将释放这些内存
-    - 传递参数
-	    - 按值传递
-	        - 按值传递结构
-	        - 也可以按值返回结构
-	    - 按指针传递
-	        - 传递数组1 （函数名 ，元素个数）
-		        - 指向数组的指针 typeName pointName [] == typeName \* pointName
-				并不会传递数组的元素数量，该参数只是作为普通指针使用，还需要第二个参数传递数组长度
-		        - 不能在函数内被修改的指针 const typeName pointName [] == const typeName \* pointName
-	        - 传递数组2 （函数名，函数名+元素个数）
-		        - eg： int sum\_arr(const int \* begin, const int \* end); {const int \* pt = begin; ......}
-	        - 传递二维数组 （函数名（指明列数）， 行数）
-		        - int array[2][2]
-		        - int array[][2]
-		        - int (\*array) [2]
-	            一定要加括号，否则int \* array[2]被解释为一个数组，包括两个指向int类型的指针
-		        - 只能接受列数正确的二维数组
-	        - c-风格字符串
-		        - char数组
-		        - 字符串字面值
-		        - char \* 指针
-	        - 传递结构的地址
-	          - &结构名
-	    - 按引用传递
-	- 函数返回值
-		- 注意不要返回指向局部变量或临时对象的引用
+	- 创建新函数
+	    - 提供函数定义
+		    - type functionname(parameterlist) {statements... return 返回值; }
+	        有返回值
+		    - void functionname(parameterlist) { statements }
+	        无返回值
+	        - 可以使用return; 退出函数
+		    - 函数在执行第一条返回语句后结束
+	    - 提供函数原型
+		    - 原型语句
+	        - double sqrt(double)**;**
+	          一定要加;
+	    - 调用函数
+	- 库函数
+	    - 库文件（namespace）包含函数的编译代码，头文件（#include)包含原型
+	- 函数参数
+	    - 参数内存
+	      - 函数被调用时，计算机为变量分配内存
+	      - 函数结束时，计算机将释放这些内存
+	    - 传递参数
+		    - 按值传递
+		        - 按值传递结构
+		        - 也可以按值返回结构
+		    - 按指针传递
+		        - 传递数组1 （函数名 ，元素个数）
+			        - 指向数组的指针 typeName pointName [] == typeName \* pointName
+					并不会传递数组的元素数量，该参数只是作为普通指针使用，还需要第二个参数传递数组长度
+			        - 不能在函数内被修改的指针 const typeName pointName [] == const typeName \* pointName
+		        - 传递数组2 （函数名，函数名+元素个数）
+			        - eg： int sum\_arr(const int \* begin, const int \* end); {const int \* pt = begin; ......}
+		        - 传递二维数组 （函数名（指明列数）， 行数）
+			        - int array[2][2]
+			        - int array[][2]
+			        - int (\*array) [2]
+		            一定要加括号，否则int \* array[2]被解释为一个数组，包括两个指向int类型的指针
+			        - 只能接受列数正确的二维数组
+		        - c-风格字符串
+			        - char数组
+			        - 字符串字面值
+			        - char \* 指针
+		        - 传递结构的地址
+		          - &结构名
+		    - 按引用传递
+		- 函数返回值
+			- 注意不要返回指向局部变量或临时对象的引用
 - 变量
 	- 持续性、作用域、链接性
 		- 作用域
@@ -610,45 +610,56 @@
   - 条件表达式
   - 逗号表达式
 - 运算符
-  - 算数运算符 + - \* / %
-    - 除法分支
-      - 整型 / 整型 = 整数（小数部分直接删除）
-      - 整数 / 浮点数 = 浮点数 （有一个浮点数就保留小数）
-    - 整型 % 整形 = 余数
-	    > 余数的正负与被除数（%号前）一致
-  - 赋值运算符 =
-    - 右值 赋给 左值
-  - 关系运算符
-    - - ![](https://api2.mubu.com/v3/document_image/1970090_06583004-5318-4491-8ca2-cc84fe66548c.png)
-  - 逻辑运算符
-    - && AND和
-      - 从左到右判断，若第一个为假则停止判断
-    - || OR或
-      - 从左到右判断，若第一个为真则停止判断
-    - ！NOT否
-    - AND优先级高于OR
-  - 条件运算符 ?:
-    - expression1 ? expression2 : expression3
-    - 如果expression1为true，则表达式的值为expression2的值
-    - 如果expression1为false，则表达式的值为expression3的值
-  - sizeof运算符
-    - sizeof ( 类型名 ）
-    - sizeof 变量
-    - sizeof ( 变量 )
-    - sizeof(数组名）
-      - 返回整个数组的大小
-    - sizeof（指针）
-      - 返回指针变量的长度
-    - sizeof 是运算符 文件自带 不用前缀
-  - 递增运算符（++）和递减运算符（--）
-    - a++：使用a的当前值计算表达式，然后将a的值加1
-    - ++a：先将a的值加1，然后使用新的值来计算表达式
-    - 递增递减运算符和指针
-      - 前缀递增、前缀递减和解除引用运算符的优先级相同，以从右到左的方式进行结合。
-      - 后缀递增和后缀递减的优先级相同，但比前缀运算符的优先级高，这两个运算符以从左到右的方式进行结合。
-      - 总的来说从右到左
-  - 组合赋值运算符
-    - - ![](https://api2.mubu.com/v3/document_image/1970090_d9d03746-5405-4033-bf36-37e6d6ae0997.png)
+	- 运算符重载
+		- `operatorop(argument_list)`
+		- 成员函数调用
+			- 在类声明内声明运算符重载函数
+			- 左侧的操作数是操作对象
+			- `A op B` 即 `A.operatorop(B)`
+			- 如果A与B为相同的类，则对于B也可以访问他的私有成员
+		- 非成员函数调用
+			- 所有值都是显示参数
+			- `A op B` 即 `operatorop(A, B)`
+		- 一元重载运算符除了--、++以外，都只能是前缀形式，要声明后缀形式，在参数列表加一个隐形的int类型参数
+	- 算数运算符 + - \* / %
+	    - 除法分支
+		    - 整型 / 整型 = 整数（小数部分直接删除）
+		    - 整数 / 浮点数 = 浮点数 （有一个浮点数就保留小数）
+	    - 整型 % 整形 = 余数
+		    > 余数的正负与被除数（%号前）一致
+	- 赋值运算符 =
+	    - 右值 赋给 左值
+	- 关系运算符
+	    - - ![](https://api2.mubu.com/v3/document_image/1970090_06583004-5318-4491-8ca2-cc84fe66548c.png)
+	- 逻辑运算符
+	    - && AND和
+		    - 从左到右判断，若第一个为假则停止判断
+	    - || OR或
+		    - 从左到右判断，若第一个为真则停止判断
+	    - ！NOT否
+	    - AND优先级高于OR
+	- 条件运算符 ?:
+	    - expression1 ? expression2 : expression3
+	    - 如果expression1为true，则表达式的值为expression2的值
+	    - 如果expression1为false，则表达式的值为expression3的值
+	- sizeof运算符
+	    - sizeof ( 类型名 ）
+	    - sizeof 变量
+	    - sizeof ( 变量 )
+	    - sizeof(数组名）
+		    - 返回整个数组的大小
+	    - sizeof（指针）
+		    - 返回指针变量的长度
+	    - sizeof 是运算符 文件自带 不用前缀
+	- 递增运算符（++）和递减运算符（--）
+	    - a++：使用a的当前值计算表达式，然后将a的值加1
+	    - ++a：先将a的值加1，然后使用新的值来计算表达式
+	    - 递增递减运算符和指针
+		    - 前缀递增、前缀递减和解除引用运算符的优先级相同，以从右到左的方式进行结合。
+		    - 后缀递增和后缀递减的优先级相同，但比前缀运算符的优先级高，这两个运算符以从左到右的方式进行结合。
+		    - 总的来说从右到左
+	- 组合赋值运算符
+	    - - ![](https://api2.mubu.com/v3/document_image/1970090_d9d03746-5405-4033-bf36-37e6d6ae0997.png)
 - 编译
 	- 程序组成结构
 		- 头文件
@@ -736,8 +747,21 @@
 			- 当类对象是const类型时，只能调用const成员变量
 		- this指针
 			- this指针指向用来调用成员函数的对象(this被作为隐藏参数传递给方法)
-	- 运算符重载
-		- operatorop(argument_list)
+	- 友元
+		- 友元函数
+			- 直接调用，不使用成员运算符，但与成员函数的访问权限相同
+			- 类声明内，在函数的声明前加上friend关键字
+			- 定义处不用加`friend`关键字
+			- 重载`<<`运算符
+			  ```c++
+			  ostream & operator<<(ostream & os, const c_name & obj)
+			  {
+				  os << ... ;
+				  return os;
+			  }
+			  ```
+		- 友元类
+		- 友元成员函数
 - 无法改变指向的值得指针，const int \*pt
 - 无法改变代表的值的引用，const int & name = ？
 - 无法改变所指的指针，int \* const pt
