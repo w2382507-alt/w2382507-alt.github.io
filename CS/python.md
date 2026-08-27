@@ -424,6 +424,7 @@
 		- 使用raise语句来主动抛出一个指定的异常
 		- `raise 异常类型("错误描述信息")`
 		- 单独写一个raise也可以
+		- `raise 异常 from 上一级的异常`
 		- `raise` 主动抛出异常 → 解释器**立刻停止当前代码**，顺着**调用栈向外逐层往上找 `except`**
 	- 异常（Exception类）
 		- 用户自定义异常
@@ -556,8 +557,36 @@
 			- 查找所有层级的特定文件 `for item in folder.rglob("*.文件后缀")`
 		- Path(__file__)是当前文件路径
 		- .parent为上一级
+		- .resolve()返回转化为绝对路径的Path对象，并且返回的地址是解析了快捷方式的，防止从快捷方式处打开导致地址失效
+	- os模块
+		- os.environ对象
+			- 类似于字典的对象，存放当前进程的全部环境变量
+			- .get("PATH")返回当前程序的环境变量
+			- os.environ["名称"] = "环境变量目录" 设置环境变量
+			- 加入新环境变量：os.environ["PATH"] = path + os.pathsep + os.environ["PATH"]
+		- 环境变量分割符(str)：os.pathsep
+		- 获取当前工作目录：os.getwd()
+		- 改变当前工作目录：os.chdir(path: str)
+		- 列出目录内容：os.listdir(path: str=当前工作目录)
+		- 创建目录：os.mkdir(path)
+		- 删除目录：os.rmdir(path)
+		- 删除文件：os.remove(path)
+		- 重命名文件或目录：os.rename(src, dst)
+		- 获取用户变量：os.getenv(key)
+			- os.getenv("Path")返回str类型的环境变量
+		- 执行系统命令：os.system(command)
 		
-
+- 其他库
+	- yt-dlp
+		- 使用时首先创建YoutubeDL对象：
+			```python
+			import yt_dlp
+			with yt_dlp.YoutubeDL(params, auto_init=True) as ydl:
+			```
+			- params是一个字典，存放下载选项 
+			- auto_init决定是否自动初始化，不自动初始化必须手动调用`.initalize()`才能使用该对象的一些函数
+		- extract_info(url, download=True)
+			- 从url获取信息返回一个字典，download决定是否同时进行下载
 
 
 

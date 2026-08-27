@@ -55,3 +55,8 @@
 	- def 控件.mousePressEvent(event: QMouseEvent):
 		- super().mousePressEvent(event)#当被控件是继承过来的时候写一下比较好
 		- 当鼠标被按下时做的事情
+- QThead
+	- 创建自定义类继承自QThead
+	- 重写run函数
+	- 开始线程时调用.start()
+	
