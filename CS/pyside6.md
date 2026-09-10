@@ -15,6 +15,7 @@
 	2. 实例化QApplication
 	3. 实例化小部件
 	4. 调用app.exec()进入Qt主循环
+	5. 注意！！QMainWindow只能使用setCentralWidget
 - 信号和槽(slot)
 	- 连接：
 	  ```python
@@ -59,4 +60,5 @@
 	- 创建自定义类继承自QThead
 	- 重写run函数
 	- 开始线程时调用.start()
+	- 不要外抛错误，错误要在线程内被try-except捕获，然后用信号传递错误
 	

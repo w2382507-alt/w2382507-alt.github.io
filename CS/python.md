@@ -587,6 +587,15 @@
 			- auto_init决定是否自动初始化，不自动初始化必须手动调用`.initalize()`才能使用该对象的一些函数
 		- extract_info(url, download=True)
 			- 从url获取信息返回一个字典，download决定是否同时进行下载
+	- mpv
+		- 首先创建mpv.MPV()对象
+		- 将设置选项的横杠换为下划线，变成成员对象可以直接修改：`player.http_header_fields = ...`
+		- 或者使用字典的方法来设置：`player["http-header-fields'] = ...`
+		- 可选的设置有
+			- --http-header-fields：传入list[str]，str格式为‘field: value'
+			- --audio-files:
+		- 可以使用成员函数`.observe_proverty("属性", 函数)`实时侦测属性变化
+			- 被侦测的函数需要参数：`name: str, value`对应属性名和属性值
 
 
 

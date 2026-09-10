@@ -42,6 +42,9 @@
 			  delay(1000);
 		  }
 		  ```
+		  - 水平扫描，低位优先
+		  - setBitmapMode(1)：透明模式，0会显示下层数据
+		  - **https://javl.github.io/image2cpp**
 - 中断
 	- attachInterrupt(digitalPinToInterrupt(pin), ISR, mode)
 		- pin:GPIO端口号
@@ -117,4 +120,9 @@
 	- .end()
 - 串口监视器
 	- Serial.begin(通信比特率):一般填9600
+	- begine完需要等待其就绪：`while(!Serial)
 	- Serial.println()：串口打印内容
+- 引脚接口
+	- [接口文档](https://espressif.com/documentation/esp32-s3_datasheet_cn.pdf#cd-pins-peri-assignment)
+	- 43、44接入无法烧录固件
+	- 46打印日志
