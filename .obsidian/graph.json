@@ -1,6 +1,6 @@
 {
-  "collapse-filter": false,
-  "search": "path:Linear-Algebra  ",
+  "collapse-filter": true,
+  "search": "path:math/calculus  ",
   "showTags": false,
   "showAttachments": false,
   "hideUnresolved": false,
@@ -22,7 +22,7 @@
       }
     }
   ],
-  "collapse-display": true,
+  "collapse-display": false,
   "showArrow": true,
   "textFadeMultiplier": 0,
   "nodeSizeMultiplier": 1.69879446640316,
@@ -32,6 +32,6 @@
   "repelStrength": 12.9446640316206,
   "linkStrength": 1,
   "linkDistance": 250,
-  "scale": 1.263045655708704,
-  "close": true
+  "scale": 1.2358089472209355,
+  "close": false
 }
