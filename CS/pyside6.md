@@ -61,4 +61,5 @@
 	- 重写run函数
 	- 开始线程时调用.start()
 	- 不要外抛错误，错误要在线程内被try-except捕获，然后用信号传递错误
-	
+- QObject
+	- 当中有一个property是一个字典，可以用setProperty(name, value)设置，property(name)获取
