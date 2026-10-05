@@ -1,6 +1,6 @@
 {
   "collapse-filter": false,
-  "search": "path:\"math/complex analysis\"  ",
+  "search": "path:\"math/calculus\"  ",
   "showTags": false,
   "showAttachments": false,
   "hideUnresolved": false,
@@ -32,6 +32,6 @@
   "repelStrength": 12.9446640316206,
   "linkStrength": 1,
   "linkDistance": 250,
-  "scale": 1.2358089472209355,
+  "scale": 0.8213837633555793,
   "close": false
 }
